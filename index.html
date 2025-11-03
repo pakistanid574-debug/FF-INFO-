@@ -1,100 +1,127 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YouTube Neon Background</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>5 kassi</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root{ --accent:#0b5cff; --muted:#666; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+    body{ margin:0; background:linear-gradient(135deg,#0b5cff 0%,#00aaff 100%); color:#fff; overflow-x:hidden; position:relative; }
+    header{ background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); padding:16px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.2); }
+    .brand{ display:flex; gap:12px; align-items:center }
+    .brand h1{ margin:0; font-size:20px }
+    nav a{ margin:0 8px; color:#fff; text-decoration:none; font-weight:600; transition:opacity .2s }
+    nav a:hover{ opacity:.7 }
+    main{ max-width:900px; margin:28px auto; padding:0 20px; animation:fadeIn 0.8s ease-in; }
+    .card{ background:rgba(255,255,255,0.15); padding:18px; border-radius:16px; backdrop-filter:blur(6px); box-shadow:0 6px 18px rgba(0,0,0,0.1); margin-bottom:18px; }
+    .muted{ color:rgba(255,255,255,0.8) }
+    a.link{ color:#fff; text-decoration:underline; font-weight:600; }
+    button{ background:#fff; color:#0b5cff; border:none; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:600; transition:transform .15s,opacity .15s }
+    button:hover{ transform:scale(1.05); opacity:.9 }
+    footer{ margin-top:28px; padding:18px 24px; text-align:center; color:rgba(255,255,255,0.8); background:transparent }
+    .post-date{ font-size:13px; color:rgba(255,255,255,0.8) }
+
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes refreshSplash{
+      0%{opacity:1;transform:scale(1);}
+      50%{opacity:.7;transform:scale(1.05);}
+      100%{opacity:0;transform:scale(1.2);}
     }
 
-    body {
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      overflow: hidden;
-      background: radial-gradient(circle at center, #000000, #120000, #240000);
-      font-family: 'Poppins', sans-serif;
-      position: relative;
+    #refreshOverlay{
+      position:fixed;top:0;left:0;width:100%;height:100%;background:#0b5cff;z-index:9999;display:flex;align-items:center;justify-content:center;animation:refreshSplash 1s ease forwards;pointer-events:none;
+    }
+    #refreshOverlay span{
+      color:#fff;font-size:24px;font-weight:700;
     }
 
-    /* Neon Sparks Animation */
-    .spark {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: red;
+    .click-circle {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      background: radial-gradient(circle, rgba(255,255,0,0.6) 0%, rgba(255,255,0,0) 80%);
       border-radius: 50%;
-      opacity: 0.8;
-      animation: fly 5s linear infinite;
+      pointer-events: none;
+      transform: scale(0);
+      animation: clickEffect 0.6s ease-out forwards;
+      z-index: 9999;
     }
 
-    @keyframes fly {
-      0% {
-        transform: translateY(100vh) translateX(0);
-        opacity: 0;
-      }
-      50% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-10vh) translateX(calc(50vw - 200px));
-        opacity: 0;
-      }
+    @keyframes clickEffect {
+      0% { transform: scale(0); opacity: 1; }
+      70% { transform: scale(3); opacity: 0.8; }
+      100% { transform: scale(4); opacity: 0; }
     }
 
-    /* YouTube Logo */
-    .logo {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      box-shadow: 0 0 40px rgba(255, 0, 0, 0.9),
-                  0 0 100px rgba(255, 0, 0, 0.6);
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
-      z-index: 2;
-    }
-
-    .logo:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 80px rgba(255, 0, 0, 1),
-                  0 0 160px rgba(255, 0, 0, 0.8);
-    }
-
-    h1 {
-      margin-top: 25px;
-      color: white;
-      font-size: 1.5rem;
-      text-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
-      z-index: 2;
-    }
+    @media(max-width:560px){ input[readonly]{ width:100% } }
   </style>
 </head>
 <body>
-  <!-- Neon Sparks -->
-  <script>
-    const count = 60; // Number of sparks
-    for (let i = 0; i < count; i++) {
-      const spark = document.createElement("div");
-      spark.className = "spark";
-      spark.style.left = Math.random() * 100 + "vw";
-      spark.style.animationDuration = 3 + Math.random() * 3 + "s";
-      spark.style.animationDelay = Math.random() * 5 + "s";
-      spark.style.background = Math.random() > 0.5 ? "red" : "#ff3b3b";
-      document.body.appendChild(spark);
-    }
-  </script>
+  <div id="refreshOverlay" hidden><span>Refreshing...</span></div>
 
-  <!-- YouTube Logo -->
-  <img 
-    src="https://yt3.googleusercontent.com/HiWYvJKbI0RB9wQWI2YbXmJmXGOYQBBF4bM4x7jy30Sfjty0Feh4buQakdjxR0o3SMhkCcq1rQ=s160-c-k-c0x00ffffff-no-rj"
-    alt="YouTube Logo"
-    class="logo"
-  >
-  <h1>Right-click → Save Logo</h1>
+  <header>
+    <div class="brand">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="6" fill="#fff"/></svg>
+      <div>
+        <h1>5 kassi</h1>
+        <div class="muted">Official Page</div>
+      </div>
+    </div>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#posts">Posts</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="card">
+      <h2>Welcome to 5 kassi</h2>
+      <p class="muted">Optimized for fast performance on all devices. Smooth and light animations with colorful design.</p>
+    </section>
+
+    <section id="posts" class="card">
+      <h3>Latest Post</h3>
+      <article>
+        <h4>Wedding Hall Opening</h4>
+        <div class="post-date">Date: November 2, 2025</div>
+        <p>We are pleased to announce the opening of the new wedding hall in 5 kassi. All are welcome to attend the event.</p>
+      </article>
+    </section>
+
+    <section id="contact" class="card">
+      <h3>Contact</h3>
+      <p class="muted">For inquiries, reach us via email:</p>
+      <a href="mailto:guestdeleteprocess@gmail.com" class="link">guestdeleteprocess@gmail.com</a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="card" style="max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
+      <div>
+        <strong>Address</strong><br>
+        <a href="https://www.google.com/maps/search/?api=1&query=5,+kassi,+Tehsil+Kabirwala" target="_blank" rel="noopener" class="link">5, kassi, Tehsil Kabirwala</a>
+      </div>
+      <div class="muted">© 2025 5 kassi</div>
+    </div>
+  </footer>
+
+  <script>
+    // Refresh animation overlay
+    window.addEventListener('beforeunload',()=>{
+      const overlay=document.getElementById('refreshOverlay');
+      overlay.hidden=false;
+    });
+
+    // Yellow click animation on any click
+    document.addEventListener('click', function(e) {
+      const circle = document.createElement('div');
+      circle.classList.add('click-circle');
+      circle.style.left = `${e.clientX - 20}px`;
+      circle.style.top = `${e.clientY - 20}px`;
+      document.body.appendChild(circle);
+      setTimeout(() => circle.remove(), 600);
+    });
+  </script>
 </body>
 </html>
