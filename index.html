@@ -4,124 +4,184 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>5 kassi</title>
+
   <style>
-    :root{ --accent:#0b5cff; --muted:#666; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
-    body{ margin:0; background:linear-gradient(135deg,#0b5cff 0%,#00aaff 100%); color:#fff; overflow-x:hidden; position:relative; }
-    header{ background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); padding:16px 24px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.2); }
-    .brand{ display:flex; gap:12px; align-items:center }
-    .brand h1{ margin:0; font-size:20px }
-    nav a{ margin:0 8px; color:#fff; text-decoration:none; font-weight:600; transition:opacity .2s }
-    nav a:hover{ opacity:.7 }
-    main{ max-width:900px; margin:28px auto; padding:0 20px; animation:fadeIn 0.8s ease-in; }
-    .card{ background:rgba(255,255,255,0.15); padding:18px; border-radius:16px; backdrop-filter:blur(6px); box-shadow:0 6px 18px rgba(0,0,0,0.1); margin-bottom:18px; }
-    .muted{ color:rgba(255,255,255,0.8) }
-    a.link{ color:#fff; text-decoration:underline; font-weight:600; }
-    button{ background:#fff; color:#0b5cff; border:none; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:600; transition:transform .15s,opacity .15s }
-    button:hover{ transform:scale(1.05); opacity:.9 }
-    footer{ margin-top:28px; padding:18px 24px; text-align:center; color:rgba(255,255,255,0.8); background:transparent }
-    .post-date{ font-size:13px; color:rgba(255,255,255,0.8) }
-
-    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes refreshSplash{
-      0%{opacity:1;transform:scale(1);}
-      50%{opacity:.7;transform:scale(1.05);}
-      100%{opacity:0;transform:scale(1.2);}
+    :root{
+      --accent:#7f7cff;
+      --muted:#cfcfff;
+      font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
     }
 
-    #refreshOverlay{
-      position:fixed;top:0;left:0;width:100%;height:100%;background:#0b5cff;z-index:9999;display:flex;align-items:center;justify-content:center;animation:refreshSplash 1s ease forwards;pointer-events:none;
-    }
-    #refreshOverlay span{
-      color:#fff;font-size:24px;font-weight:700;
-    }
-
-    .click-circle {
-      position: fixed;
-      width: 40px;
-      height: 40px;
-      background: radial-gradient(circle, rgba(255,255,0,0.6) 0%, rgba(255,255,0,0) 80%);
-      border-radius: 50%;
-      pointer-events: none;
-      transform: scale(0);
-      animation: clickEffect 0.6s ease-out forwards;
-      z-index: 9999;
+    body{
+      margin:0;
+      color:#fff;
+      overflow-x:hidden;
+      position:relative;
+      background:
+        radial-gradient(circle at 20% 20%, #4b0082 0%, transparent 40%),
+        radial-gradient(circle at 80% 30%, #00008b 0%, transparent 45%),
+        radial-gradient(circle at 50% 80%, #2b1055 0%, transparent 50%),
+        linear-gradient(180deg,#050014,#02010a 100%);
     }
 
-    @keyframes clickEffect {
-      0% { transform: scale(0); opacity: 1; }
-      70% { transform: scale(3); opacity: 0.8; }
-      100% { transform: scale(4); opacity: 0; }
+    /* Stars */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, white 50%, transparent 51%),
+        radial-gradient(1px 1px at 70% 80%, white 50%, transparent 51%),
+        radial-gradient(1px 1px at 40% 60%, white 50%, transparent 51%),
+        radial-gradient(1px 1px at 90% 10%, white 50%, transparent 51%);
+      background-size:200px 200px;
+      opacity:.6;
+      z-index:-1;
     }
 
-    @media(max-width:560px){ input[readonly]{ width:100% } }
+    header{
+      background:rgba(255,255,255,0.08);
+      backdrop-filter:blur(12px);
+      padding:16px 24px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border-bottom:1px solid rgba(255,255,255,0.15);
+    }
+
+    .brand{display:flex;gap:12px;align-items:center}
+    .brand h1{margin:0;font-size:20px}
+
+    nav a{
+      margin:0 8px;
+      color:#fff;
+      text-decoration:none;
+      font-weight:600;
+      transition:opacity .2s;
+    }
+    nav a:hover{opacity:.7}
+
+    main{
+      max-width:900px;
+      margin:28px auto;
+      padding:0 20px;
+      animation:fadeIn .8s ease-in;
+    }
+
+    .card{
+      background:rgba(255,255,255,0.12);
+      padding:18px;
+      border-radius:18px;
+      backdrop-filter:blur(10px);
+      box-shadow:0 10px 30px rgba(0,0,0,0.4);
+      margin-bottom:20px;
+    }
+
+    .muted{color:var(--muted)}
+    .post-date{font-size:13px;color:#ddd}
+
+    footer{
+      margin-top:30px;
+      padding:20px;
+      text-align:center;
+    }
+
+    a.link{color:#fff;font-weight:600}
+
+    @keyframes fadeIn{
+      from{opacity:0;transform:translateY(10px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    /* Click galaxy pulse */
+    .click-circle{
+      position:fixed;
+      width:40px;
+      height:40px;
+      background:radial-gradient(circle, rgba(173,216,230,.9), rgba(138,43,226,.4), transparent);
+      border-radius:50%;
+      pointer-events:none;
+      transform:scale(0);
+      animation:clickEffect .7s ease-out forwards;
+      z-index:9999;
+    }
+
+    @keyframes clickEffect{
+      0%{transform:scale(0);opacity:1}
+      100%{transform:scale(4);opacity:0}
+    }
   </style>
 </head>
+
 <body>
-  <div id="refreshOverlay" hidden><span>Refreshing...</span></div>
 
-  <header>
-    <div class="brand">
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="6" fill="#fff"/></svg>
-      <div>
-        <h1>5 kassi</h1>
-        <div class="muted">Official Page</div>
-      </div>
+<header>
+  <div class="brand">
+    <svg width="36" height="36"><rect width="36" height="36" rx="8" fill="#fff"/></svg>
+    <div>
+      <h1>5 kassi</h1>
+      <div class="muted">Galaxy Edition</div>
     </div>
-    <nav>
-      <a href="#home">Home</a>
-      <a href="#posts">Posts</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </header>
+  </div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#posts">Posts</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
 
-  <main>
-    <section id="home" class="card">
-      <h2>Welcome to 5 kassi</h2>
-      <p class="muted">Optimized for fast performance on all devices. Smooth and light animations with colorful design.</p>
-    </section>
+<main>
+  <section id="home" class="card">
+    <h2>Welcome to 5 kassi 🌌</h2>
+    <p class="muted">Galaxy inspired design with smooth animations and fast performance.</p>
+  </section>
 
-    <section id="posts" class="card">
-      <h3>Latest Post</h3>
-      <article>
-        <h4>Wedding Hall Opening</h4>
-        <div class="post-date">Date: November 2, 2025</div>
-        <p>We are pleased to announce the opening of the new wedding hall in 5 kassi. All are welcome to attend the event.</p>
-      </article>
-    </section>
+  <section id="posts" class="card">
+    <h3>Latest Posts</h3>
 
-    <section id="contact" class="card">
-      <h3>Contact</h3>
-      <p class="muted">For inquiries, reach us via email:</p>
-      <a href="mailto:guestdeleteprocess@gmail.com" class="link">guestdeleteprocess@gmail.com</a>
-    </section>
-  </main>
+    <article>
+      <h4>Today Fog 🌫️</h4>
+      <div class="post-date">Date: 8 Jan, 2026</div>
+      <p>Today heavy fog covered 5 kassi early in the morning, creating a beautiful and mysterious galaxy-like atmosphere.</p>
+    </article>
 
-  <footer>
-    <div class="card" style="max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
-      <div>
-        <strong>Address</strong><br>
-        <a href="https://www.google.com/maps/search/?api=1&query=5,+kassi,+Tehsil+Kabirwala" target="_blank" rel="noopener" class="link">5, kassi, Tehsil Kabirwala</a>
-      </div>
-      <div class="muted">© 2025 5 kassi</div>
-    </div>
-  </footer>
+    <hr style="opacity:.2;margin:16px 0">
 
-  <script>
-    // Refresh animation overlay
-    window.addEventListener('beforeunload',()=>{
-      const overlay=document.getElementById('refreshOverlay');
-      overlay.hidden=false;
-    });
+    <article>
+      <h4>Wedding Hall Opening</h4>
+      <div class="post-date">Date: November 2, 2025</div>
+      <p>We are pleased to announce the opening of the new wedding hall in 5 kassi.</p>
+    </article>
+  </section>
 
-    // Yellow click animation on any click
-    document.addEventListener('click', function(e) {
-      const circle = document.createElement('div');
-      circle.classList.add('click-circle');
-      circle.style.left = `${e.clientX - 20}px`;
-      circle.style.top = `${e.clientY - 20}px`;
-      document.body.appendChild(circle);
-      setTimeout(() => circle.remove(), 600);
-    });
-  </script>
+  <section id="contact" class="card">
+    <h3>Contact</h3>
+    <p class="muted">For inquiries:</p>
+    <a href="mailto:guestdeleteprocess@gmail.com" class="link">guestdeleteprocess@gmail.com</a>
+  </section>
+</main>
+
+<footer>
+  <div class="card" style="max-width:900px;margin:auto">
+    <strong>Address</strong><br>
+    <a class="link" target="_blank"
+      href="https://www.google.com/maps/search/?api=1&query=5,+kassi,+Tehsil+Kabirwala">
+      5, kassi, Tehsil Kabirwala
+    </a>
+    <div class="muted">© 2025 5 kassi</div>
+  </div>
+</footer>
+
+<script>
+  document.addEventListener('click', e=>{
+    const c=document.createElement('div');
+    c.className='click-circle';
+    c.style.left=(e.clientX-20)+'px';
+    c.style.top=(e.clientY-20)+'px';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),700);
+  });
+</script>
+
 </body>
 </html>
