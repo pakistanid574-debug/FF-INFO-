@@ -1,123 +1,176 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>5 kassi</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>5 kassi</title>
 
-  <style>
-    :root{
-      --accent:#7f7cff;
-      --muted:#cfcfff;
-      font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
-    }
+<style>
+:root{
+  --accent:#7f7cff;
+  --muted:#cfcfff;
+  font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+}
 
-    body{
-      margin:0;
-      color:#fff;
-      overflow-x:hidden;
-      position:relative;
-      background:
-        radial-gradient(circle at 20% 20%, #4b0082 0%, transparent 40%),
-        radial-gradient(circle at 80% 30%, #00008b 0%, transparent 45%),
-        radial-gradient(circle at 50% 80%, #2b1055 0%, transparent 50%),
-        linear-gradient(180deg,#050014,#02010a 100%);
-    }
+body{
+  margin:0;
+  color:#fff;
+  overflow-x:hidden;
+  background:
+    radial-gradient(circle at 20% 20%, #4b0082 0%, transparent 40%),
+    radial-gradient(circle at 80% 30%, #00008b 0%, transparent 45%),
+    radial-gradient(circle at 50% 80%, #2b1055 0%, transparent 50%),
+    linear-gradient(180deg,#050014,#02010a 100%);
+}
 
-    /* Stars */
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      background-image:
-        radial-gradient(1px 1px at 20% 30%, white 50%, transparent 51%),
-        radial-gradient(1px 1px at 70% 80%, white 50%, transparent 51%),
-        radial-gradient(1px 1px at 40% 60%, white 50%, transparent 51%),
-        radial-gradient(1px 1px at 90% 10%, white 50%, transparent 51%);
-      background-size:200px 200px;
-      opacity:.6;
-      z-index:-1;
-    }
+/* Stars */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, white 50%, transparent 51%),
+    radial-gradient(1px 1px at 70% 80%, white 50%, transparent 51%),
+    radial-gradient(1px 1px at 40% 60%, white 50%, transparent 51%),
+    radial-gradient(1px 1px at 90% 10%, white 50%, transparent 51%);
+  background-size:200px 200px;
+  opacity:.6;
+  z-index:-1;
+}
 
-    header{
-      background:rgba(255,255,255,0.08);
-      backdrop-filter:blur(12px);
-      padding:16px 24px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      border-bottom:1px solid rgba(255,255,255,0.15);
-    }
+header{
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(12px);
+  padding:16px 24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid rgba(255,255,255,0.15);
+}
 
-    .brand{display:flex;gap:12px;align-items:center}
-    .brand h1{margin:0;font-size:20px}
+.brand{display:flex;gap:12px;align-items:center}
+.brand h1{margin:0;font-size:20px}
 
-    nav a{
-      margin:0 8px;
-      color:#fff;
-      text-decoration:none;
-      font-weight:600;
-      transition:opacity .2s;
-    }
-    nav a:hover{opacity:.7}
+nav a{
+  margin:0 8px;
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+}
+nav a:hover{opacity:.7}
 
-    main{
-      max-width:900px;
-      margin:28px auto;
-      padding:0 20px;
-      animation:fadeIn .8s ease-in;
-    }
+main{
+  max-width:900px;
+  margin:28px auto;
+  padding:0 20px;
+  animation:fadeIn .8s ease-in;
+}
 
-    .card{
-      background:rgba(255,255,255,0.12);
-      padding:18px;
-      border-radius:18px;
-      backdrop-filter:blur(10px);
-      box-shadow:0 10px 30px rgba(0,0,0,0.4);
-      margin-bottom:20px;
-    }
+.card{
+  background:rgba(255,255,255,0.12);
+  padding:18px;
+  border-radius:18px;
+  backdrop-filter:blur(10px);
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+  margin-bottom:20px;
+}
 
-    .muted{color:var(--muted)}
-    .post-date{font-size:13px;color:#ddd}
+.muted{color:var(--muted)}
+.post-date{font-size:13px;color:#ddd}
 
-    footer{
-      margin-top:30px;
-      padding:20px;
-      text-align:center;
-    }
+footer{
+  margin-top:30px;
+  padding:20px;
+  text-align:center;
+  position:relative;
+}
 
-    a.link{color:#fff;font-weight:600}
+a.link{color:#fff;font-weight:600}
 
-    @keyframes fadeIn{
-      from{opacity:0;transform:translateY(10px)}
-      to{opacity:1;transform:translateY(0)}
-    }
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
 
-    /* Click galaxy pulse */
-    .click-circle{
-      position:fixed;
-      width:40px;
-      height:40px;
-      background:radial-gradient(circle, rgba(173,216,230,.9), rgba(138,43,226,.4), transparent);
-      border-radius:50%;
-      pointer-events:none;
-      transform:scale(0);
-      animation:clickEffect .7s ease-out forwards;
-      z-index:9999;
-    }
+/* Click effect */
+.click-circle{
+  position:fixed;
+  width:40px;
+  height:40px;
+  background:radial-gradient(circle, rgba(173,216,230,.9), rgba(138,43,226,.4), transparent);
+  border-radius:50%;
+  pointer-events:none;
+  transform:scale(0);
+  animation:clickEffect .7s ease-out forwards;
+  z-index:9999;
+}
+@keyframes clickEffect{
+  0%{transform:scale(0);opacity:1}
+  100%{transform:scale(4);opacity:0}
+}
 
-    @keyframes clickEffect{
-      0%{transform:scale(0);opacity:1}
-      100%{transform:scale(4);opacity:0}
-    }
-  </style>
+/* ================= RGB MODE ================= */
+body.rgb{
+  animation:rgbBG 8s linear infinite;
+}
+
+@keyframes rgbBG{
+  0%{background:linear-gradient(120deg,#ff004c,#7f00ff,#00eaff)}
+  33%{background:linear-gradient(120deg,#00eaff,#00ff6a,#fffb00)}
+  66%{background:linear-gradient(120deg,#fffb00,#ff6a00,#ff004c)}
+  100%{background:linear-gradient(120deg,#ff004c,#7f00ff,#00eaff)}
+}
+
+.rgb header,
+.rgb .card{
+  box-shadow:
+    0 0 15px rgba(0,255,255,.6),
+    0 0 35px rgba(255,0,255,.4);
+}
+
+/* RGB BUTTON */
+#rgbKeyBtn{
+  position:absolute;
+  bottom:12px;
+  right:12px;
+  padding:10px 18px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#00eaff,#7f00ff,#ff00aa);
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 0 18px rgba(0,255,255,.8);
+  user-select:none;
+  transition:.25s;
+}
+#rgbKeyBtn:hover{
+  transform:scale(1.08);
+  box-shadow:0 0 30px rgba(255,0,255,1);
+}
+
+/* LIVE TIME */
+.live-time{
+  margin-top:12px;
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:.5px;
+  color:#fff;
+  text-shadow:0 0 10px rgba(0,255,255,.7);
+}
+.live-time span{
+  color:#cfcfff;
+  font-weight:500;
+}
+</style>
 </head>
 
 <body>
 
 <header>
   <div class="brand">
-    <svg width="36" height="36"><rect width="36" height="36" rx="8" fill="#fff"/></svg>
+    <svg width="36" height="36">
+      <rect width="36" height="36" rx="8" fill="#fff"/>
+    </svg>
     <div>
       <h1>5 kassi</h1>
       <div class="muted">Galaxy Edition</div>
@@ -131,34 +184,35 @@
 </header>
 
 <main>
-  <section id="home" class="card">
-    <h2>Welcome to 5 kassi 🌌</h2>
-    <p class="muted">Galaxy inspired design with smooth animations and fast performance.</p>
-  </section>
+<section id="home" class="card">
+  <h2>Welcome to 5 kassi 🌌</h2>
+  <p class="muted">Galaxy website with RGB mode & live local time.</p>
+</section>
 
-  <section id="posts" class="card">
-    <h3>Latest Posts</h3>
+<section id="posts" class="card">
+  <h3>Latest Posts</h3>
 
-    <article>
-      <h4>Today Fog 🌫️</h4>
-      <div class="post-date">Date: 8 Jan, 2026</div>
-      <p>Today heavy fog covered 5 kassi early in the morning, creating a beautiful and mysterious galaxy-like atmosphere.</p>
-    </article>
+  <article>
+    <h4>Today Fog 🌫️</h4>
+    <div class="post-date">Date: 8 Jan, 2026</div>
+    <p>Heavy fog created a galaxy-like atmosphere.</p>
+  </article>
 
-    <hr style="opacity:.2;margin:16px 0">
+  <hr style="opacity:.2;margin:16px 0">
 
-    <article>
-      <h4>Wedding Hall Opening</h4>
-      <div class="post-date">Date: November 2, 2025</div>
-      <p>We are pleased to announce the opening of the new wedding hall in 5 kassi.</p>
-    </article>
-  </section>
+  <article>
+    <h4>Wedding Hall Opening</h4>
+    <div class="post-date">Date: November 2, 2025</div>
+    <p>New wedding hall opened successfully.</p>
+  </article>
+</section>
 
-  <section id="contact" class="card">
-    <h3>Contact</h3>
-    <p class="muted">For inquiries:</p>
-    <a href="mailto:guestdeleteprocess@gmail.com" class="link">guestdeleteprocess@gmail.com</a>
-  </section>
+<section id="contact" class="card">
+  <h3>Contact</h3>
+  <a href="mailto:guestdeleteprocess@gmail.com" class="link">
+    guestdeleteprocess@gmail.com
+  </a>
+</section>
 </main>
 
 <footer>
@@ -168,19 +222,74 @@
       href="https://www.google.com/maps/search/?api=1&query=5,+kassi,+Tehsil+Kabirwala">
       5, kassi, Tehsil Kabirwala
     </a>
+
+    <!-- LIVE TIME -->
+    <div class="live-time">
+      🕒 5 kassi Time: <span id="kassiTime">--:--:--</span><br>
+      📅 <span id="kassiDate">Loading...</span>
+    </div>
+
     <div class="muted">© 2025 5 kassi</div>
   </div>
+
+  <div id="rgbKeyBtn">RGB ON</div>
 </footer>
 
 <script>
-  document.addEventListener('click', e=>{
-    const c=document.createElement('div');
-    c.className='click-circle';
-    c.style.left=(e.clientX-20)+'px';
-    c.style.top=(e.clientY-20)+'px';
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(),700);
+/* Click effect */
+document.addEventListener('click', e=>{
+  const c=document.createElement('div');
+  c.className='click-circle';
+  c.style.left=(e.clientX-20)+'px';
+  c.style.top=(e.clientY-20)+'px';
+  document.body.appendChild(c);
+  setTimeout(()=>c.remove(),700);
+});
+
+/* RGB TOGGLE */
+let buffer="";
+const btn=document.getElementById("rgbKeyBtn");
+
+function toggleRGB(){
+  document.body.classList.toggle("rgb");
+  btn.textContent =
+    document.body.classList.contains("rgb") ? "RGB OFF" : "RGB ON";
+}
+
+btn.addEventListener("click", toggleRGB);
+
+document.addEventListener("keydown", e=>{
+  buffer+=e.key;
+  if(buffer.includes("Key26")){
+    toggleRGB();
+    buffer="";
+  }
+  if(buffer.length>10) buffer="";
+});
+
+/* LIVE TIME FUNCTION */
+function updateKassiTime(){
+  const now=new Date();
+
+  const time=now.toLocaleTimeString("en-GB",{
+    hour:"2-digit",
+    minute:"2-digit",
+    second:"2-digit"
   });
+
+  const date=now.toLocaleDateString("en-GB",{
+    weekday:"long",
+    day:"2-digit",
+    month:"long",
+    year:"numeric"
+  });
+
+  document.getElementById("kassiTime").textContent=time;
+  document.getElementById("kassiDate").textContent=date;
+}
+
+updateKassiTime();
+setInterval(updateKassiTime,1000);
 </script>
 
 </body>
