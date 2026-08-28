@@ -1,1 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeoPluse - UK Exclusive Tool</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        /* Strict Full Screen Geo-Lock Overlay */
+        #geoBlockOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #0f172a;
+            color: white;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #geoBlockOverlay .lock-card {
+            background: #1e293b;
+            padding: 40px 30px;
+            border-radius: 12px;
+            max-width: 460px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #334155;
+        }
+
+        #geoBlockOverlay h1 { font-size: 24px; color: #ef4444; margin-bottom: 15px; }
+        #geoBlockOverlay p { font-size: 15px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px; }
+        
+        .status-box {
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #fbbf24;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border: 1px dashed #475569;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-retry {
+            background: #2563eb;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn-redirect {
+            background: #dc2626;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn-retry:hover { background: #1d4ed8; }
+        .btn-redirect:hover { background: #b91c1c; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .logo { font-size: 26px; font-weight: bold; color: #1e293b; }
+        .logo span { color: #2563eb; }
+
+        .location-badge {
+            background-color: #dcfce7;
+            color: #15803d;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .nav-tabs { display: flex; gap: 8px; }
+
+        .tab-btn {
+            padding: 9px 16px;
+            border: 1px solid #cbd5e1;
+            background: #f1f5f9;
+            color: #475569;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .hero {
+            padding: 40px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            min-height: 85vh;
+        }
+
+        .hero h1 { font-size: 32px; color: #0f172a; margin-bottom: 8px; }
+        .hero p { font-size: 15px; color: #475569; margin-bottom: 20px; }
+
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+
+        .analyzer-box {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .input-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .analyzer-box input, .analyzer-box select {
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .keyword-input, .url-input { flex: 3; min-width: 200px; }
+        .country-select { flex: 1; min-width: 140px; background-color: #f1f5f9; font-weight: 600; }
+
+        .btn-analyze {
+            background-color: #2563eb;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-analyze:hover { background-color: #1d4ed8; }
+
+        .results-container {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: none;
+        }
+
+        .report-list { list-style: none; text-align: left; margin-top: 20px; }
+
+        .report-item {
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .status-good { background-color: #dcfce7; color: #15803d; }
+        .status-bad { background-color: #fee2e2; color: #b91c1c; }
+
+        .dot { height: 14px; width: 14px; border-radius: 50%; display: inline-block; margin-right: 10px; }
+        .dot-green { background-color: #22c55e; box-shadow: 0 0 8px #22c55e; }
+        .dot-red { background-color: #ef4444; box-shadow: 0 0 8px #ef4444; }
+
+        .suggestion-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #eff6ff;
+            border: 1px dashed #2563eb;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .suggested-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: white;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .meta-header { display: flex; justify-content: space-between; align-items: center; }
+
+        .metrics-badge {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .btn-copy {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-copy:hover { background-color: #059669; }
+        .loading { display: none; margin-top: 15px; font-weight: 600; color: #2563eb; }
+
+        footer { text-align: center; padding: 20px; background-color: #0f172a; color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+    <!-- Access Overlay Screen -->
+    <div id="geoBlockOverlay">
+        <div class="lock-card">
+            <h1>🚫 Access Denied</h1>
+            <p>This tool is strictly configured for <strong>United Kingdom (UK)</strong> users.</p>
+            <div class="status-box" id="lockStatusText">Checking IP location...</div>
+            <p id="redirectCountdown" style="font-size: 13px; color: #94a3b8; margin-bottom: 15px;"></p>
+            <div class="btn-group">
+                <button class="btn-retry" onclick="checkLocationStrict()">Re-verify Network</button>
+                <button class="btn-redirect" onclick="triggerRedirect()">← Go Back Immediately</button>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">Seo<span>Pluse</span></div>
+        <div class="location-badge" id="ukActiveBadge">🇬🇧 UK Region Active</div>
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('checkerPage', this)">Validator & Fixer</button>
+            <button class="tab-btn" onclick="switchTab('extractorPage', this)">Web URL Extractor</button>
+            <button class="tab-btn" onclick="switchTab('metaPage', this)">Meta Tag Generator</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        
+        <!-- PAGE 1: KEYWORD VALIDATOR & FIXER -->
+        <div id="checkerPage" class="page-content active">
+            <h1>UK Keyword Validator & Fixer</h1>
+            <p>Target Region: <strong>United Kingdom (UK)</strong></p>
+            
+            <div class="analyzer-box">
+                <div class="input-group">
+                    <input type="text" id="targetKeyword" class="keyword-input" placeholder="Enter keyword (e.g. chauffeur service london)" required>
+                    <select class="country-select" disabled><option>🇬🇧 UK Market</option></select>
+                </div>
+                <button class="btn-analyze" onclick="handleAction(validateKeyword)">Check Keyword</button>
+            </div>
+
+            <div class="results-container" id="resultsContainer">
+                <h2>Validation Result for "<span id="kwDisplay" style="color: #2563eb;"></span>"</h2>
+                <ul class="report-list" id="keywordReportList"></ul>
+
+                <div class="suggestion-box" id="suggestionBox" style="display:none;">
+                    <h3>✨ Auto-Corrected Keywords & Metrics:</h3>
+                    <div id="suggestedList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 2: EXTRACT KEYWORDS FROM WEBSITE URL -->
+        <div id="extractorPage" class="page-content">
+            <h1>Web URL Keyword Extractor</h1>
+            <p>Enter any website URL to extract high-value target keywords</p>
+            
+            <div class="analyzer-box">
+                <div class="input-group">
+                    <input type="url" id="extractUrl" class="url-input" placeholder="https://example.co.uk" required>
+                    <select class="country-select" disabled><option>🇬🇧 UK Market</option></select>
+                </div>
+                <button class="btn-analyze" onclick="handleAction(extractWebKeywords)">Extract Best Keywords</button>
+            </div>
+
+            <div class="loading" id="extractLoading">Analyzing URL structures & Headings...</div>
+
+            <div class="results-container" id="extractorResults">
+                <h2>Best Extracted Keywords</h2>
+                <div class="suggestion-box" style="display:block;">
+                    <div id="extractedList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 3: META TITLE & DESCRIPTION GENERATOR -->
+        <div id="metaPage" class="page-content">
+            <h1>Meta Tag Generator & Character Counter</h1>
+            <p>Generate SEO Meta Tags with Pixel Length Indicators</p>
+            
+            <div class="analyzer-box">
+                <div class="input-group">
+                    <input type="text" id="metaKeyword" class="keyword-input" placeholder="Enter main keyword (e.g. Chauffeur Service)" required>
+                    <select class="country-select" disabled><option>🇬🇧 UK Market</option></select>
+                </div>
+                <button class="btn-analyze" onclick="handleAction(generateMetaTags)">Generate Meta Tags</button>
+            </div>
+
+            <div class="results-container" id="metaResults">
+                <h2>Generated SERP Meta Tags</h2>
+                <div class="suggestion-box" style="display:block;">
+                    <div id="metaList"></div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <footer>
+        <p>&copy; 2026 SeoPluse UK. Exclusive Search Intelligence.</p>
+    </footer>
+
+    <script>
+        let isUKVerified = false;
+        let redirectTimer = null;
+
+        function triggerRedirect() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "https://google.com";
+            }
+        }
+
+        function startAutoRedirectCountdown() {
+            let countdown = 3;
+            const redirectText = document.getElementById('redirectCountdown');
+            redirectText.innerText = `Redirecting back in ${countdown} seconds...`;
+
+            if (redirectTimer) clearInterval(redirectTimer);
+            redirectTimer = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    redirectText.innerText = `Redirecting back in ${countdown} seconds...`;
+                } else {
+                    clearInterval(redirectTimer);
+                    triggerRedirect();
+                }
+            }, 1000);
+        }
+
+        async function fetchWithTimeout(resource, options = {}) {
+            const { timeout = 2500 } = options;
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
+            try {
+                const response = await fetch(resource, { ...options, signal: controller.signal });
+                clearTimeout(id);
+                return response;
+            } catch (error) {
+                clearTimeout(id);
+                return null;
+            }
+        }
+
+        async function checkLocationStrict() {
+            const overlay = document.getElementById('geoBlockOverlay');
+            const statusText = document.getElementById('lockStatusText');
+            
+            statusText.innerText = "Verifying Network Connection...";
+            statusText.style.color = "#fbbf24";
+
+            let countryCode = "";
+            let countryName = "";
+
+            // Endpoint 1: Direct CORS-Free IP Check
+            try {
+                const res1 = await fetchWithTimeout('https://ipwho.is/');
+                if (res1 && res1.ok) {
+                    const data1 = await res1.json();
+                    if(data1.success) {
+                        countryCode = data1.country_code || "";
+                        countryName = data1.country || "";
+                    }
+                }
+            } catch (e) {}
+
+            // Endpoint 2: Fallback
+            if (!countryCode) {
+                try {
+                    const res2 = await fetchWithTimeout('https://api.ipify.org?format=json');
+                    if (res2 && res2.ok) {
+                        const ipData = await res2.json();
+                        if(ipData.ip) {
+                            const resDetails = await fetchWithTimeout(`https://ipapi.co/${ipData.ip}/json/`);
+                            if (resDetails && resDetails.ok) {
+                                const data2 = await resDetails.json();
+                                countryCode = data2.country_code || "";
+                                countryName = data2.country_name || "";
+                            }
+                        }
+                    }
+                } catch (e) {}
+            }
+
+            // Fallback 3: Browser Timezone Check as automatic network failsafe
+            if (!countryCode) {
+                const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                if (userTimezone === 'Europe/London' || userTimezone.includes('London')) {
+                    countryCode = 'GB';
+                    countryName = 'United Kingdom';
+                }
+            }
+
+            if (countryCode === 'GB' || countryCode === 'UK') {
+                isUKVerified = true;
+                overlay.style.display = 'none';
+                if (redirectTimer) clearInterval(redirectTimer);
+            } else {
+                isUKVerified = false;
+                overlay.style.display = 'flex';
+                if (countryCode) {
+                    statusText.innerText = `IP Detected: ${countryName} (${countryCode}) - UK Required!`;
+                } else {
+                    statusText.innerText = "Non-UK Location / VPN Connection Inactive.";
+                }
+                statusText.style.color = "#ef4444";
+                startAutoRedirectCountdown();
+            }
+
+            return isUKVerified;
+        }
+
+        async function handleAction(actionFunction) {
+            const isAuthorized = await checkLocationStrict();
+            if (isAuthorized) {
+                actionFunction();
+            }
+        }
+
+        window.onload = checkLocationStrict;
+
+        function switchTab(pageId, btn) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function copyText(text, btnElement) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => updateButton(btnElement));
+            } else {
+                let textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    updateButton(btnElement);
+                } catch (err) { alert('Copy Failed!'); }
+                document.body.removeChild(textArea);
+            }
+        }
+
+        function updateButton(btnElement) {
+            const originalText = btnElement.innerText;
+            btnElement.innerText = "Copied! ✔";
+            btnElement.style.backgroundColor = "#2563eb";
+            setTimeout(() => {
+                btnElement.innerText = originalText;
+                btnElement.style.backgroundColor = "#10b981";
+            }, 2000);
+        }
+
+        function toTitleCase(str) {
+            return str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+        }
+
+        // KEYWORD VALIDATOR
+        function validateKeyword() {
+            let originalInput = document.getElementById('targetKeyword').value.trim();
+            let keywordInput = originalInput.toLowerCase();
+            
+            const resultsContainer = document.getElementById('resultsContainer');
+            const keywordReportList = document.getElementById('keywordReportList');
+            const kwDisplay = document.getElementById('kwDisplay');
+            const suggestionBox = document.getElementById('suggestionBox');
+            const suggestedList = document.getElementById('suggestedList');
+
+            if (!keywordInput) { alert("Please enter a Keyword!"); return; }
+
+            keywordReportList.innerHTML = '';
+            suggestedList.innerHTML = '';
+            kwDisplay.innerText = originalInput;
+            suggestionBox.style.display = 'none';
+
+            let kwChecks = [];
+            let failedCount = 0;
+
+            let rawWords = keywordInput.split(/\s+/);
+            let uniqueWords = [...new Set(rawWords)];
+            let wordCount = uniqueWords.length;
+
+            const isGoodLength = wordCount >= 2 && wordCount <= 5;
+            if (!isGoodLength) failedCount++;
+            kwChecks.push({
+                title: "Keyword Length Rule",
+                text: isGoodLength ? `Optimal length (${wordC
