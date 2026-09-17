@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:geo="http://www.google.com/geo/schemas/sitemap/1.0">
   <url>
     <loc>https://ff-info-plum.vercel.app/</loc>
-    <lastmod>2026-09-05</lastmod>
+    <lastmod>2026-09-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+
+    <!-- Dublin & Ireland Geo-Targeting Signals -->
+    <xhtml:link rel="alternate" hreflang="en-IE" href="https://ff-info-plum.vercel.app/" />
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://ff-info-plum.vercel.app/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ff-info-plum.vercel.app/" />
+
+    <!-- Geo Location Data (Dublin, Ireland) -->
+    <geo:geo>
+      <geo:format>gml</geo:format>
+    </geo:geo>
   </url>
 </urlset>
