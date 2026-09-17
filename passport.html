@@ -1,1 +1,30 @@
-passport.html
+<!DOCTYPE html>
+<html lang="en-IE">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Irish Passport Photo Resizer & Cropper (35x45mm) | Free Dublin Tool</title>
+  <meta name="description" content="Resize and crop photos for Irish Passport Online & PSC Card applications (35x45mm, under 50KB). 100% free, private browser-based tool in Dublin.">
+  <link rel="canonical" href="https://ff-info-plum.vercel.app/passport">
+  <style>
+    body { background: #0b0d19; color: #f8fafc; font-family: system-ui, sans-serif; text-align: center; padding: 40px 15px; }
+    .card { max-width: 600px; margin: auto; background: rgba(20, 24, 48, 0.85); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 16px; padding: 30px; }
+    h1 { color: #06b6d4; font-size: 1.8rem; margin-bottom: 10px; }
+    p { color: #94a3b8; font-size: 0.95rem; margin-bottom: 20px; }
+    .dropzone { border: 2px dashed #a855f7; border-radius: 12px; padding: 40px; cursor: pointer; background: rgba(15, 23, 42, 0.5); }
+    .btn { background: linear-gradient(135deg, #a855f7, #ec4899); color: #fff; border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 15px; width: 100%; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🪪 Irish Passport Photo Resizer (35x45mm)</h1>
+    <p>Crop & compress photos instantly for official Irish Passport Online and Public Services Card (PSC).</p>
+    <label for="file" class="dropzone">
+      <div>📁 Select Photo for Passport Crop</div>
+      <input type="file" id="file" accept="image/*" style="display:none;">
+    </label>
+    <button class="btn" onclick="document.getElementById('file').click()">Upload Image</button>
+  </div>
+</body>
+</html>
+
