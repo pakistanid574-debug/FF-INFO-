@@ -1,1 +1,30 @@
+<!DOCTYPE html>
+<html lang="en-IE">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NDLS Photo Compressor Under 50KB | Irish Driving Licence Tool</title>
+  <meta name="description" content="Compress driving licence photos under 50KB for NDLS Ireland online application. Fast, private, and automatic image size reduction.">
+  <link rel="canonical" href="https://ff-info-plum.vercel.app/ndls">
+  <style>
+    body { background: #0b0d19; color: #f8fafc; font-family: system-ui, sans-serif; text-align: center; padding: 40px 15px; }
+    .card { max-width: 600px; margin: auto; background: rgba(20, 24, 48, 0.85); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 16px; padding: 30px; }
+    h1 { color: #a855f7; font-size: 1.8rem; margin-bottom: 10px; }
+    p { color: #94a3b8; font-size: 0.95rem; margin-bottom: 20px; }
+    .dropzone { border: 2px dashed #06b6d4; border-radius: 12px; padding: 40px; cursor: pointer; background: rgba(15, 23, 42, 0.5); }
+    .btn { background: linear-gradient(135deg, #06b6d4, #a855f7); color: #fff; border: none; padding: 12px 24px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 15px; width: 100%; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🚗 NDLS Photo Compressor (Under 50KB)</h1>
+    <p>Reduce photo file size under 50KB specifically calibrated for NDLS Irish Driving Licence upload requirements.</p>
+    <label for="file" class="dropzone">
+      <div>📁 Select NDLS Application Photo</div>
+      <input type="file" id="file" accept="image/*" style="display:none;">
+    </label>
+    <button class="btn" onclick="document.getElementById('file').click()">Upload Image</button>
+  </div>
+</body>
+</html>
 
