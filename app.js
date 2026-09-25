@@ -41,33 +41,48 @@ toggleAuthBtn.addEventListener('click', (e) => {
   }
 });
 
-// Authentication Handler
+// Authentication Handler (Signup & Login)
 authSubmitBtn.addEventListener('click', async () => {
   const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
   const username = usernameInput.value.trim();
 
-  if (!email || !password) return alert("Please fill all required fields");
+  if (!email || !password) return alert("Please fill in email and password");
 
   if (isSignUp) {
     if (!username) return alert("Please enter a username");
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) return alert(error.message);
     
-    // Profile Entry
+    // Signup User
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) return alert("Signup Error: " + error.message);
+    
     if (data.user) {
-      await supabase.from('profiles').insert([{ id: data.user.id, username }]);
-      alert("Signup successful! You can now log in.");
-      checkUser();
+      // Create Profile Row
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([{ id: data.user.id, username: username }]);
+
+      if (profileError) {
+        console.error("Profile insert error:", profileError);
+      }
+
+      // Check if session exists (Email confirmation OFF case)
+      if (data.session) {
+        alert("Signup successful!");
+        checkUser();
+      } else {
+        alert("Signup registered! If required, check your email for confirmation before logging in.");
+      }
     }
   } else {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return alert(error.message);
+    // Login User
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) return alert("Login Error: " + error.message);
     checkUser();
   }
 });
 
-// Check Logged In User
+// Check Logged In User State
 async function checkUser() {
   const { data: { user } } = await supabase.auth.getUser();
   if (user) {
@@ -75,8 +90,13 @@ async function checkUser() {
     appSection.style.display = "block";
     logoutBtn.style.display = "inline-block";
     
-    // Fetch Profile
-    const { data: profile } = await supabase.from('profiles').select('username').eq('id', user.id).single();
+    // Fetch User Profile
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('id', user.id)
+      .maybeSingle();
+
     userDisplay.innerText = `@${profile ? profile.username : 'User'}`;
     loadPosts();
   } else {
@@ -96,7 +116,7 @@ logoutBtn.addEventListener('click', async () => {
 // Publish Post
 publishBtn.addEventListener('click', async () => {
   const content = postContent.value.trim();
-  if (!content) return alert("Post cannot be empty");
+  if (!content) return alert("Post content cannot be empty");
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return alert("Please log in again");
@@ -110,7 +130,7 @@ publishBtn.addEventListener('click', async () => {
   }
 });
 
-// Load Global Posts Feed
+// Load Global Feed
 async function loadPosts() {
   postsFeed.innerHTML = "<p>Loading posts...</p>";
   
@@ -121,6 +141,7 @@ async function loadPosts() {
 
   if (error) {
     postsFeed.innerHTML = "<p>Error loading posts.</p>";
+    console.error(error);
     return;
   }
 
@@ -141,13 +162,12 @@ async function loadPosts() {
   `).join('');
 }
 
-// Actions
+// Global Actions
 window.likePost = (id) => alert("Liked post #" + id);
 window.sharePost = (id) => {
   navigator.clipboard.writeText(window.location.href);
   alert("Link copied to clipboard!");
 };
 
-// Initial Load
+// Initial Execution
 checkUser();
-    
