@@ -5,8 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GlobePulse - Global Social Feed</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Supabase JS Client -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -26,7 +24,7 @@
       <input type="text" id="username" placeholder="Username (for signup)" style="display:none;">
       <input type="email" id="email" placeholder="Email Address">
       <input type="password" id="password" placeholder="Password">
-      <button id="auth-submit-btn">Login</button>
+      <button id="auth-submit-btn" type="button">Login</button>
       <p class="toggle-auth">
         <span id="auth-toggle-text">Don't have an account?</span> 
         <a href="#" id="toggle-auth-btn">Sign Up</a>
@@ -39,7 +37,7 @@
       <div class="create-post">
         <h3>Create a Post</h3>
         <textarea id="post-content" placeholder="What's happening globally?..."></textarea>
-        <button id="publish-btn">Post Globally</button>
+        <button id="publish-btn" type="button">Post Globally</button>
       </div>
 
       <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid #334155;">
@@ -52,6 +50,9 @@
     </div>
   </div>
 
+  <!-- Supabase JS Library (Loaded First) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Main App Script -->
   <script src="app.js"></script>
 </body>
 </html>
