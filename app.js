@@ -2,7 +2,8 @@
 const SUPABASE_URL = "https://vahwyycftctxlvbwxeyi.supabase.co"; 
 const SUPABASE_KEY = "sb_publishable_I1ipl6-iKa69lDImEI6GCw_n86fSoos";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Safe Initialization
+const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
 // DOM Elements
 const authSection = document.getElementById('auth-section');
@@ -22,76 +23,76 @@ const postsFeed = document.getElementById('posts-feed');
 
 let isSignUp = false;
 
-// Auth Toggle (Login <-> Signup)
-toggleAuthBtn.addEventListener('click', (e) => {
-  e.preventDefault();
-  isSignUp = !isSignUp;
-  if (isSignUp) {
-    authTitle.innerText = "Sign Up to GlobePulse";
-    usernameInput.style.display = "block";
-    authSubmitBtn.innerText = "Sign Up";
-    authToggleText.innerText = "Already have an account?";
-    toggleAuthBtn.innerText = "Login";
-  } else {
-    authTitle.innerText = "Login to GlobePulse";
-    usernameInput.style.display = "none";
-    authSubmitBtn.innerText = "Login";
-    authToggleText.innerText = "Don't have an account?";
-    toggleAuthBtn.innerText = "Sign Up";
-  }
-});
-
-// Authentication Handler (Signup & Login)
-authSubmitBtn.addEventListener('click', async () => {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
-  const username = usernameInput.value.trim();
-
-  if (!email || !password) return alert("Please fill in email and password");
-
-  if (isSignUp) {
-    if (!username) return alert("Please enter a username");
-    
-    // Signup User
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) return alert("Signup Error: " + error.message);
-    
-    if (data.user) {
-      // Create Profile Row
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert([{ id: data.user.id, username: username }]);
-
-      if (profileError) {
-        console.error("Profile insert error:", profileError);
-      }
-
-      // Check if session exists (Email confirmation OFF case)
-      if (data.session) {
-        alert("Signup successful!");
-        checkUser();
-      } else {
-        alert("Signup registered! If required, check your email for confirmation before logging in.");
-      }
+// Toggle Login / Signup Form
+if (toggleAuthBtn) {
+  toggleAuthBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    isSignUp = !isSignUp;
+    if (isSignUp) {
+      authTitle.innerText = "Sign Up to GlobePulse";
+      usernameInput.style.display = "block";
+      authSubmitBtn.innerText = "Sign Up";
+      authToggleText.innerText = "Already have an account?";
+      toggleAuthBtn.innerText = "Login";
+    } else {
+      authTitle.innerText = "Login to GlobePulse";
+      usernameInput.style.display = "none";
+      authSubmitBtn.innerText = "Login";
+      authToggleText.innerText = "Don't have an account?";
+      toggleAuthBtn.innerText = "Sign Up";
     }
-  } else {
-    // Login User
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return alert("Login Error: " + error.message);
-    checkUser();
-  }
-});
+  });
+}
 
-// Check Logged In User State
+// Authentication Click Handler
+if (authSubmitBtn) {
+  authSubmitBtn.addEventListener('click', async () => {
+    if (!supabaseClient) return alert("Database connection error. Please refresh the page.");
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    const username = usernameInput.value.trim();
+
+    if (!email || !password) {
+      return alert("Please enter both email and password.");
+    }
+
+    if (isSignUp) {
+      if (!username) return alert("Please enter a username.");
+      
+      authSubmitBtn.innerText = "Processing...";
+      const { data, error } = await supabaseClient.auth.signUp({ email, password });
+      authSubmitBtn.innerText = "Sign Up";
+
+      if (error) return alert("Signup Error: " + error.message);
+
+      if (data.user) {
+        await supabaseClient.from('profiles').insert([{ id: data.user.id, username }]);
+        alert("Signup Successful! Logging you in...");
+        checkUser();
+      }
+    } else {
+      authSubmitBtn.innerText = "Logging in...";
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      authSubmitBtn.innerText = "Login";
+
+      if (error) return alert("Login Error: " + error.message);
+      checkUser();
+    }
+  });
+}
+
+// Check User Session
 async function checkUser() {
-  const { data: { user } } = await supabase.auth.getUser();
+  if (!supabaseClient) return;
+  
+  const { data: { user } } = await supabaseClient.auth.getUser();
   if (user) {
     authSection.style.display = "none";
     appSection.style.display = "block";
     logoutBtn.style.display = "inline-block";
-    
-    // Fetch User Profile
-    const { data: profile } = await supabase
+
+    const { data: profile } = await supabaseClient
       .from('profiles')
       .select('username')
       .eq('id', user.id)
@@ -107,41 +108,48 @@ async function checkUser() {
   }
 }
 
-// Logout
-logoutBtn.addEventListener('click', async () => {
-  await supabase.auth.signOut();
-  checkUser();
-});
+// Logout Action
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', async () => {
+    if (supabaseClient) await supabaseClient.auth.signOut();
+    checkUser();
+  });
+}
 
-// Publish Post
-publishBtn.addEventListener('click', async () => {
-  const content = postContent.value.trim();
-  if (!content) return alert("Post content cannot be empty");
+// Publish Post Action
+if (publishBtn) {
+  publishBtn.addEventListener('click', async () => {
+    const content = postContent.value.trim();
+    if (!content) return alert("Please write something before posting.");
 
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return alert("Please log in again");
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return alert("Session expired. Please log in again.");
 
-  const { error } = await supabase.from('posts').insert([{ user_id: user.id, content }]);
-  if (error) {
-    alert("Error publishing post: " + error.message);
-  } else {
-    postContent.value = "";
-    loadPosts();
-  }
-});
+    publishBtn.innerText = "Posting...";
+    const { error } = await supabaseClient.from('posts').insert([{ user_id: user.id, content }]);
+    publishBtn.innerText = "Post Globally";
 
-// Load Global Feed
+    if (error) {
+      alert("Post Error: " + error.message);
+    } else {
+      postContent.value = "";
+      loadPosts();
+    }
+  });
+}
+
+// Load Feed Posts
 async function loadPosts() {
+  if (!postsFeed || !supabaseClient) return;
   postsFeed.innerHTML = "<p>Loading posts...</p>";
-  
-  const { data: posts, error } = await supabase
+
+  const { data: posts, error } = await supabaseClient
     .from('posts')
     .select('*, profiles(username)')
     .order('created_at', { ascending: false });
 
   if (error) {
-    postsFeed.innerHTML = "<p>Error loading posts.</p>";
-    console.error(error);
+    postsFeed.innerHTML = "<p>Error loading feed.</p>";
     return;
   }
 
@@ -162,12 +170,12 @@ async function loadPosts() {
   `).join('');
 }
 
-// Global Actions
+// Global Functions for Actions
 window.likePost = (id) => alert("Liked post #" + id);
 window.sharePost = (id) => {
   navigator.clipboard.writeText(window.location.href);
-  alert("Link copied to clipboard!");
+  alert("Post link copied to clipboard!");
 };
 
-// Initial Execution
+// Start Check
 checkUser();
