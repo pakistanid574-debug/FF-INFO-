@@ -1,11 +1,17 @@
-// Supabase Configuration
+// Supabase Credentials
 const SUPABASE_URL = "https://vahwyycftctxlvbwxeyi.supabase.co"; 
 const SUPABASE_KEY = "sb_publishable_I1ipl6-iKa69lDImEI6GCw_n86fSoos";
 
-// Safe Initialization
-const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+// Safe Initialization Check
+let supabaseClient;
+if (window.supabase) {
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+} else {
+  console.error("Supabase CDN failed to load");
+}
 
-// DOM Elements
+// Elements
+const authForm = document.getElementById('auth-form');
 const authSection = document.getElementById('auth-section');
 const appSection = document.getElementById('app-section');
 const authTitle = document.getElementById('auth-title');
@@ -23,7 +29,7 @@ const postsFeed = document.getElementById('posts-feed');
 
 let isSignUp = false;
 
-// Toggle Login / Signup Form
+// Toggle Login / Signup
 if (toggleAuthBtn) {
   toggleAuthBtn.addEventListener('click', (e) => {
     e.preventDefault();
@@ -31,12 +37,14 @@ if (toggleAuthBtn) {
     if (isSignUp) {
       authTitle.innerText = "Sign Up to GlobePulse";
       usernameInput.style.display = "block";
+      usernameInput.required = true;
       authSubmitBtn.innerText = "Sign Up";
       authToggleText.innerText = "Already have an account?";
       toggleAuthBtn.innerText = "Login";
     } else {
       authTitle.innerText = "Login to GlobePulse";
       usernameInput.style.display = "none";
+      usernameInput.required = false;
       authSubmitBtn.innerText = "Login";
       authToggleText.innerText = "Don't have an account?";
       toggleAuthBtn.innerText = "Sign Up";
@@ -44,45 +52,47 @@ if (toggleAuthBtn) {
   });
 }
 
-// Authentication Click Handler
-if (authSubmitBtn) {
-  authSubmitBtn.addEventListener('click', async () => {
-    if (!supabaseClient) return alert("Database connection error. Please refresh the page.");
+// Auth Form Handler (Prevents page reload)
+if (authForm) {
+  authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!supabaseClient) {
+      return alert("Database loading error. Please refresh the page!");
+    }
 
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
     const username = usernameInput.value.trim();
 
-    if (!email || !password) {
-      return alert("Please enter both email and password.");
-    }
-
     if (isSignUp) {
-      if (!username) return alert("Please enter a username.");
-      
-      authSubmitBtn.innerText = "Processing...";
+      authSubmitBtn.innerText = "Creating Account...";
       const { data, error } = await supabaseClient.auth.signUp({ email, password });
-      authSubmitBtn.innerText = "Sign Up";
-
-      if (error) return alert("Signup Error: " + error.message);
+      
+      if (error) {
+        authSubmitBtn.innerText = "Sign Up";
+        return alert("Signup Error: " + error.message);
+      }
 
       if (data.user) {
         await supabaseClient.from('profiles').insert([{ id: data.user.id, username }]);
-        alert("Signup Successful! Logging you in...");
+        alert("Signup Successful! Logging in...");
         checkUser();
       }
     } else {
       authSubmitBtn.innerText = "Logging in...";
       const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      authSubmitBtn.innerText = "Login";
-
-      if (error) return alert("Login Error: " + error.message);
+      
+      if (error) {
+        authSubmitBtn.innerText = "Login";
+        return alert("Login Error: " + error.message);
+      }
       checkUser();
     }
   });
 }
 
-// Check User Session
+// Check Active Session
 async function checkUser() {
   if (!supabaseClient) return;
   
@@ -116,21 +126,21 @@ if (logoutBtn) {
   });
 }
 
-// Publish Post Action
+// Publish Post
 if (publishBtn) {
   publishBtn.addEventListener('click', async () => {
     const content = postContent.value.trim();
-    if (!content) return alert("Please write something before posting.");
+    if (!content) return alert("Write something before posting!");
 
     const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) return alert("Session expired. Please log in again.");
+    if (!user) return alert("Please log in again.");
 
     publishBtn.innerText = "Posting...";
     const { error } = await supabaseClient.from('posts').insert([{ user_id: user.id, content }]);
     publishBtn.innerText = "Post Globally";
 
     if (error) {
-      alert("Post Error: " + error.message);
+      alert("Error: " + error.message);
     } else {
       postContent.value = "";
       loadPosts();
@@ -138,7 +148,7 @@ if (publishBtn) {
   });
 }
 
-// Load Feed Posts
+// Load Global Feed
 async function loadPosts() {
   if (!postsFeed || !supabaseClient) return;
   postsFeed.innerHTML = "<p>Loading posts...</p>";
@@ -170,12 +180,12 @@ async function loadPosts() {
   `).join('');
 }
 
-// Global Functions for Actions
+// Actions
 window.likePost = (id) => alert("Liked post #" + id);
 window.sharePost = (id) => {
   navigator.clipboard.writeText(window.location.href);
-  alert("Post link copied to clipboard!");
+  alert("Link copied!");
 };
 
-// Start Check
+// Initial Execution
 checkUser();
