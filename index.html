@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CorpSec - Social & Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { darker: '#0f172a', card: '#1e293b' }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-darker text-slate-100 font-sans h-screen flex flex-col overflow-hidden">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-slate-900 border-b border-slate-800 px-3 sm:px-4 py-3 flex items-center justify-between z-10">
+        <div class="flex items-center space-x-2 sm:space-x-3 overflow-hidden">
+            <div id="myHeaderAvatar" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-600 flex-shrink-0 flex items-center justify-center font-bold text-white overflow-hidden border border-emerald-500/30">
+                <i class="fa-solid fa-user text-xs"></i>
+            </div>
+            <div class="truncate">
+                <h1 class="font-bold text-sm sm:text-base tracking-tight flex items-center gap-1.5 truncate">
+                    <span id="chatTitleHeader" class="truncate">Global Room</span>
+                    <span class="text-[9px] sm:text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30 flex-shrink-0">Live</span>
+                </h1>
+                <p class="text-[11px] sm:text-xs text-slate-400 truncate" id="currentProfileDisplay">Profile: Not Set</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-1.5 flex-shrink-0">
+            <button onclick="switchChatRoom('global')" class="bg-indigo-600 hover:bg-indigo-700 text-xs px-2.5 py-2 rounded-xl font-medium transition-all hidden flex-shrink-0" id="backToGlobalBtn">
+                <i class="fa-solid fa-globe"></i>
+            </button>
+            <button onclick="openAdminLoginModal()" class="bg-amber-600/20 hover:bg-amber-600/30 text-amber-400 border border-amber-500/30 text-xs px-2.5 py-2 rounded-xl font-semibold transition-all flex items-center gap-1 flex-shrink-0">
+                <i class="fa-solid fa-shield-halved text-[11px]"></i> <span class="hidden sm:inline">Admin</span>
+            </button>
+            <button onclick="toggleProfilesDrawer()" class="bg-slate-800 hover:bg-slate-700 text-xs px-2.5 py-2 rounded-xl border border-slate-700 font-medium transition-all flex items-center gap-1 flex-shrink-0">
+                <i class="fa-solid fa-user-group text-emerald-400 text-[11px]"></i> <span>Profiles</span>
+            </button>
+            <button onclick="openProfileModal()" class="bg-slate-800 hover:bg-slate-700 text-xs p-2 rounded-xl border border-slate-700 text-slate-300 flex-shrink-0">
+                <i class="fa-solid fa-user-gear text-[11px]"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Live Chat Area -->
+    <main id="chatContainer" class="flex-grow overflow-y-auto p-3 sm:p-4 space-y-4 bg-slate-950/50">
+        <div class="text-center py-12 text-slate-500">
+            <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-emerald-500"></i>
+            <p class="text-sm">Connecting to secure cloud network...</p>
+        </div>
+    </main>
+
+    <!-- Message, Gallery & Voice Input Bar -->
+    <footer class="bg-slate-900 border-t border-slate-800 p-2 sm:p-3 flex flex-col gap-1.5">
+        <form id="chatForm" onsubmit="sendMessage(event)" class="max-w-4xl mx-auto flex items-center gap-1.5 w-full">
+            <label class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2.5 sm:px-3.5 sm:py-3 rounded-xl border border-slate-700 transition-all flex items-center justify-center cursor-pointer flex-shrink-0" title="Upload Image">
+                <i class="fa-solid fa-paperclip text-emerald-400 text-sm"></i>
+                <input type="file" id="galleryFileInput" accept="image/*" class="hidden" onchange="uploadFromGallery(event)">
+            </label>
+
+            <button type="button" id="voiceRecordBtn" onclick="toggleVoiceRecord()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2.5 sm:px-3.5 sm:py-3 rounded-xl border border-slate-700 transition-all flex items-center justify-center flex-shrink-0" title="Record Voice">
+                <i class="fa-solid fa-microphone text-emerald-400 text-sm" id="micIcon"></i>
+            </button>
+
+            <input type="text" id="messageInput" autocomplete="off" placeholder="Type a message..." class="flex-grow bg-slate-800 border border-slate-700 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all min-w-0">
+            
+            <button type="submit" id="sendBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </form>
+
+        <!-- Footer Branding -->
+        <div class="text-center text-[10px] sm:text-[11px] text-slate-400 font-medium tracking-wide">
+            Design By <span class="text-emerald-400 font-bold">Hassan Alvi</span>
+        </div>
+    </footer>
+
+    <!-- Active Profiles Drawer -->
+    <div id="profilesDrawer" class="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border-l border-slate-800 w-full max-w-sm h-full p-4 sm:p-5 flex flex-col justify-between shadow-2xl">
+            <div>
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+                    <h3 class="font-bold text-base sm:text-lg flex items-center gap-2">
+                        <i class="fa-solid fa-address-book text-emerald-400"></i> Live Profiles
+                    </h3>
+                    <button onclick="toggleProfilesDrawer()" class="text-slate-400 hover:text-white p-1">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+                <div id="profilesList" class="space-y-3 overflow-y-auto max-h-[75vh]">
+                    <p class="text-xs text-slate-500 text-center">Loading profiles...</p>
+                </div>
+            </div>
+            <div class="text-[11px] text-slate-500 text-center border-t border-slate-800 pt-3">
+                Tap 'Chat' to message instantly
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Edit Modal -->
+    <div id="profileModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-5 sm:p-6 shadow-2xl m-4">
+            <h3 class="text-base sm:text-lg font-bold mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-user-pen text-emerald-400"></i> Edit Profile Details
+            </h3>
+            <p class="text-xs text-slate-400 mb-4">Update your name, role, and profile picture URL.</p>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Your Full Name</label>
+                    <input type="text" id="userNameInput" placeholder="e.g. Ali" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Role / Department</label>
+                    <input type="text" id="userDeptInput" placeholder="e.g. Operations Manager" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Profile Picture (Image URL)</label>
+                    <input type="text" id="userAvatarInput" placeholder="https://example.com/photo.jpg" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-emerald-500">
+                </div>
+                <button type="button" onclick="saveProfile()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-semibold text-xs sm:text-sm mt-2 transition-all">
+                    Save Profile
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-amber-500/40 rounded-2xl w-full max-w-sm p-6 shadow-2xl m-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-base sm:text-lg font-bold flex items-center gap-2 text-amber-400">
+                    <i class="fa-solid fa-lock"></i> Admin Portal Login
+                </h3>
+                <button onclick="closeAdminLoginModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="verifyAdmin(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Admin Username</label>
+                    <input type="text" id="adminUser" required placeholder="Username" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-amber-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Admin Password</label>
+                    <input type="password" id="adminPass" required placeholder="Password" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm outline-none focus:border-amber-500">
+                </div>
+                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl font-semibold text-xs sm:text-sm mt-2 transition-all">
+                    Login to Admin Panel
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel Dashboard Modal -->
+    <div id="adminPanelModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-amber-500/40 rounded-2xl w-full max-w-2xl h-[85vh] p-4 sm:p-6 shadow-2xl flex flex-col justify-between m-4">
+            <div>
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+                    <h3 class="text-base sm:text-lg font-bold flex items-center gap-2 text-amber-400">
+                        <i class="fa-solid fa-user-shield"></i> Admin Control Center (Hassan)
+                    </h3>
+                    <button onclick="closeAdminPanel()" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+                </div>
+                <p class="text-xs text-slate-400 mb-3">Manage registered profiles, ban/unban users, or edit their details:</p>
+                <div id="adminProfilesList" class="space-y-3 overflow-y-auto max-h-[55vh] pr-1">
+                    <p class="text-xs text-slate-500 text-center py-6">Loading user database...</p>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 pt-3 text-center">
+                <button onclick="closeAdminPanel()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-5 py-2 rounded-xl text-xs font-semibold">Close Panel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Suspension Alert Modal -->
+    <div id="suspendedModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md hidden">
+        <div class="bg-red-950/90 border border-red-500/60 rounded-2xl w-full max-w-sm p-6 shadow-2xl text-center m-4">
+            <div class="w-14 h-14 bg-red-600/20 border border-red-500/40 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500 text-2xl">
+                <i class="fa-solid fa-ban"></i>
+            </div>
+            <h3 class="text-xl font-bold text-red-400 mb-2">Account Suspended</h3>
+            <p class="text-xs text-slate-300 mb-6">Your profile has been suspended by the administrator. You cannot send messages or access chat features.</p>
+            <button onclick="openProfileModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 py-2.5 rounded-xl text-xs font-semibold">Switch / Edit Profile</button>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        const DB_BASE = "https://gigpulse-app-default-rtdb.firebaseio.com/";
+        
+        let currentUser = localStorage.getItem('corp_user_name') || "";
+        let currentDept = localStorage.getItem('corp_user_dept') || "";
+        let currentAvatar = localStorage.getItem('corp_user_avatar') || "";
+        let activeChatTarget = "global";
+        let allProfiles = {};
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+
+        window.onload = function() {
+            if (!currentUser) {
+                openProfileModal();
+            } else {
+                updateProfileDisplay();
+                updateUserHeartbeat();
+            }
+            fetchMessages();
+            fetchProfiles();
+            
+            setInterval(fetchMessages, 2500);
+            setInterval(fetchProfiles, 5000);
+            setInterval(updateUserHeartbeat, 15000);
+        };
+
+        function openProfileModal() {
+            document.getElementById('profileModal').classList.remove('hidden');
+            if(currentUser) document.getElementById('userNameInput').value = currentUser;
+            if(currentDept) document.getElementById('userDeptInput').value = currentDept;
+            if(currentAvatar) document.getElementById('userAvatarInput').value = currentAvatar;
+        }
+
+        async function saveProfile() {
+            const name = document.getElementById('userNameInput').value.trim();
+            const dept = document.getElementById('userDeptInput').value.trim();
+            const avatar = document.getElementById('userAvatarInput').value.trim();
+            if(!name) { alert("Please enter your name!"); return; }
+            
+            currentUser = name;
+            currentDept = dept || "Member";
+            currentAvatar = avatar || "";
+
+            localStorage.setItem('corp_user_name', currentUser);
+            localStorage.setItem('corp_user_dept', currentDept);
+            localStorage.setItem('corp_user_avatar', currentAvatar);
+
+            updateProfileDisplay();
+            await updateUserHeartbeat();
+            document.getElementById('profileModal').classList.add('hidden');
+            fetchMessages();
+        }
+
+        function updateProfileDisplay() {
+            document.getElementById('currentProfileDisplay').innerText = `${currentUser} (${currentDept})`;
+            const avatarContainer = document.getElementById('myHeaderAvatar');
+            if(currentAvatar) {
+                avatarContainer.innerHTML = `<img src="${currentAvatar}" class="w-full h-full object-cover">`;
+            } else {
+                avatarContainer.innerHTML = `<span class="text-xs font-bold">${currentUser.charAt(0).toUpperCase()}</span>`;
+            }
+        }
+
+        async function updateUserHeartbeat() {
+            if(!currentUser) return;
+            const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            // Check if current user is suspended
+            try {
+                const res = await fetch(`${DB_BASE}profiles/${currentUser.replace(/\s+/g, '_')}.json`);
+                const prof = await res.json();
+                if(prof && prof.suspended) {
+                    document.getElementById('suspendedModal').classList.remove('hidden');
+                    return;
+                } else {
+                    document.getElementById('suspendedModal').classList.add('hidden');
+                }
+
+                const profileData = {
+                    name: currentUser,
+                    dept: currentDept,
+                    avatar: currentAvatar,
+                    lastSeen: now,
+                    updatedAt: Date.now(),
+                    suspended: prof ? (prof.suspended || false) : false
+                };
+                await fetch(`${DB_BASE}profiles/${currentUser.replace(/\s+/g, '_')}.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(profileData)
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        function toggleProfilesDrawer() {
+            document.getElementById('profilesDrawer').classList.toggle('hidden');
+        }
+
+        // Admin Authentication & Panel Controls
+        function openAdminLoginModal() { document.getElementById('adminLoginModal').classList.remove('hidden'); }
+        function closeAdminLoginModal() { document.getElementById('adminLoginModal').classList.add('hidden'); }
+        function closeAdminPanel() { document.getElementById('adminPanelModal').classList.add('hidden'); }
+
+        function verifyAdmin(e) {
+            e.preventDefault();
+            const u = document.getElementById('adminUser').value.trim();
+            const p = document.getElementById('adminPass').value.trim();
+
+            if(u === 'Hassan' && p === 'Secret') {
+                closeAdminLoginModal();
+                document.getElementById('adminUser').value = "";
+                document.getElementById('adminPass').value = "";
+                openAdminPanel();
+            } else {
+                alert("Invalid Admin Username or Password!");
+            }
+        }
+
+        async function openAdminPanel() {
+            document.getElementById('adminPanelModal').classList.remove('hidden');
+            try {
+                const res = await fetch(`${DB_BASE}profiles.json`);
+                const profiles = await res.json() || {};
+                const container = document.getElementById('adminProfilesList');
+
+                let html = '';
+                Object.keys(profiles).forEach(key => {
+                    const prof = profiles[key];
+                    const isSuspended = prof.suspended === true;
+
+                    html += `
+                        <div class="bg-slate-800 border ${isSuspended ? 'border-red-500/50 bg-red-950/20' : 'border-slate-700'} p-3.5 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h4 class="font-bold text-sm text-slate-200">${prof.name}</h4>
+                                    <span class="text-[10px] px-2 py-0.5 rounded-full ${isSuspended ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
+                                        ${isSuspended ? 'Suspended' : 'Active'}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-400">Dept: ${prof.dept || 'N/A'} • Last Seen: ${prof.lastSeen || 'Recent'}</p>
+                            </div>
+                            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                                <button onclick="adminToggleSuspend('${prof.name}', ${!isSuspended})" class="${isSuspended ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'} text-white text-xs px-3 py-1.5 rounded-lg font-semibold transition-all">
+                                    ${isSuspended ? 'Unban' : 'Suspend'}
+                                </button>
+                                <button onclick="adminEditProfilePrompt('${prof.name}', '${prof.dept || ''}', '${prof.avatar || ''}')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-3 py-1.5 rounded-lg font-semibold transition-all">
+                                    Edit
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html || `<p class="text-xs text-slate-500 text-center">No profiles found.</p>`;
+            } catch(e) { console.error(e); }
+        }
+
+        async function adminToggleSuspend(targetName, status) {
+            const key = targetName.replace(/\s+/g, '_');
+            try {
+                // Fetch existing profile data first
+                const res = await fetch(`${DB_BASE}profiles/${key}.json`);
+                let data = await res.json() || {};
+                data.suspended = status;
+
+                await fetch(`${DB_BASE}profiles/${key}.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                openAdminPanel();
+                fetchProfiles();
+            } catch(e) { alert("Error updating status: " + e.message); }
+        }
+
+        async function adminEditProfilePrompt(targetName, oldDept, oldAvatar) {
+            const newName = prompt("Edit Profile Name:", targetName);
+            if(!newName) return;
+            const newDept = prompt("Edit Department:", oldDept);
+            const newAvatar = prompt("Edit Avatar Image URL:", oldAvatar);
+
+            const oldKey = targetName.replace(/\s+/g, '_');
+            const newKey = newName.replace(/\s+/g, '_');
+
+            try {
+                const res = await fetch(`${DB_BASE}profiles/${oldKey}.json`);
+                let data = await res.json() || {};
+                data.name = newName;
+                data.dept = newDept;
+                data.avatar = newAvatar;
+
+                if(oldKey !== newKey) {
+                    await fetch(`${DB_BASE}profiles/${newKey}.json`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    await fetch(`${DB_BASE}profiles/${oldKey}.json`, { method: 'DELETE' });
+                } else {
+                    await fetch(`${DB_BASE}profiles/${oldKey}.json`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                }
+                openAdminPanel();
+                fetchProfiles();
+            } catch(e) { alert("Error editing profile: " + e.message); }
+        }
+
+        async function fetchProfiles() {
+            try {
+                const res = await fetch(`${DB_BASE}profiles.json`);
+                allProfiles = await res.json() || {};
+
+                const reqRes = await fetch(`${DB_BASE}friend_requests.json`);
+                const allRequests = await reqRes.json() || {};
+
+                const container = document.getElementById('profilesList');
+                let html = '';
+                Object.keys(allProfiles).forEach(key => {
+                    const prof = allProfiles[key];
+                    if(prof.name === currentUser) return;
+                    if(prof.suspended) return; // Hide suspended from normal directory
+
+                    const sentReqId = `${currentUser}_TO_${prof.name}`.replace(/\s+/g, '_');
+                    const recvReqId = `${prof.name}_TO_${currentUser}`.replace(/\s+/g, '_');
+
+                    let reqStatus = 'none';
+                    if(allRequests[sentReqId]) reqStatus = allRequests[sentReqId].status;
+                    if(allRequests[recvReqId]) reqStatus = 'received_' + allRequests[recvReqId].status;
+
+                    let actionHtml = '';
+                    if(reqStatus === 'accepted' || reqStatus === 'received_accepted') {
+                        actionHtml = `
+                            <button onclick="startDirectChat('${prof.name}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-xl font-semibold shadow-md flex items-center gap-1.5">
+                                <i class="fa-solid fa-comment-dots"></i> Chat
+                            </button>
+                        `;
+                    } else if(reqStatus === 'pending') {
+                        actionHtml = `<span class="text-[10px] bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-lg border border-yellow-500/30">Requested</span>`;
+                    } else if(reqStatus.startsWith('received_pending')) {
+                        actionHtml = `<button onclick="acceptFriendRequest('${prof.name}')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] px-2.5 py-1 rounded-xl font-semibold">Accept</button>`;
+                    } else {
+                        actionHtml = `
+                            <button onclick="sendFriendRequest('${prof.name}')" class="bg-slate-700 hover:bg-slate-600 text-emerald-400 text-xs px-2.5 py-1.5 rounded-xl font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-user-plus text-[10px]"></i> Add
+                            </button>
+                        `;
+                    }
+
+                    const avatarHtml = prof.avatar ? 
+                        `<img src="${prof.avatar}" class="w-9 h-9 rounded-xl object-cover border border-slate-700">` : 
+                        `<div class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-emerald-400 text-xs">${prof.name.charAt(0)}</div>`;
+
+                    html += `
+                        <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-xl flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-3 truncate">
+                                ${avatarHtml}
+                                <div class="truncate">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0"></span>
+                                        <h4 class="font-bold text-xs text-slate-200 truncate">${prof.name}</h4>
+                                    </div>
+                                    <p class="text-[10px] text-slate-400 truncate">${prof.dept}</p>
+                                    <p class="text-[9px] text-slate-500 mt-0.5">Last seen: ${prof.lastSeen || 'Active'}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1 flex-shrink-0">${actionHtml}</div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html || `<p class="text-xs text-slate-500 text-center">No other profiles online.</p>`;
+            } catch(e) { console.error(e); }
+        }
+
+        async function sendFriendRequest(targetName) {
+            const reqId = `${currentUser}_TO_${targetName}`.replace(/\s+/g, '_');
+            const data = { from: currentUser, to: targetName, status: 'pending', timestamp: Date.now() };
+            await fetch(`${DB_BASE}friend_requests/${reqId}.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            fetchProfiles();
+        }
+
+        async function acceptFriendRequest(targetName) {
+            const reqId = `${targetName}_TO_${currentUser}`.replace(/\s+/g, '_');
+            await fetch(`${DB_BASE}friend_requests/${reqId}/status.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify('accepted')
+            });
+            fetchProfiles();
+        }
+
+        function startDirectChat(targetName) {
+            activeChatTarget = targetName;
+            document.getElementById('chatTitleHeader').innerText = `Chat with ${targetName}`;
+            document.getElementById('backToGlobalBtn').classList.remove('hidden');
+            toggleProfilesDrawer();
+            fetchMessages();
+        }
+
+        function switchChatRoom(room) {
+            activeChatTarget = room;
+            document.getElementById('chatTitleHeader').innerText = "Global Room";
+            document.getElementById('backToGlobalBtn').classList.add('hidden');
+            fetchMessages();
+        }
+
+        function uploadFromGallery(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64Image = e.target.result;
+                const newMsg = {
+                    sender: currentUser,
+                    dept: currentDept,
+                    avatar: currentAvatar,
+                    text: "📷 Shared photo",
+                    imageUrl: base64Image,
+                    type: 'photo',
+                    recipient: activeChatTarget,
+                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                };
+                await postToFirebase(newMsg);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function toggleVoiceRecord() {
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const reader = new FileReader();
+                        reader.readAsDataURL(audioBlob);
+                        reader.onloadend = async () => {
+                            const newMsg = {
+                                sender: currentUser,
+                                dept: currentDept,
+                                avatar: currentAvatar,
+                                text: "🎤 Voice Message",
+                                audioUrl: reader.result,
+                                type: 'audio',
+                                recipient: activeChatTarget,
+                                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                            };
+                            await postToFirebase(newMsg);
+                        };
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    document.getElementById('micIcon').className = "fa-solid fa-stop text-red-500 animate-pulse";
+                } catch (err) { alert("Microphone access denied."); }
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                document.getElementById('micIcon').className = "fa-solid fa-microphone text-emerald-400";
+            }
+        }
+
+        async function fetchMessages() {
+            try {
+                let endpoint = activeChatTarget === 'global' ? 
+                    `${DB_BASE}company_chat.json` : 
+                    `${DB_BASE}direct_chats.json`;
+
+                const res = await fetch(endpoint);
+                const data = await res.json();
+                const container = document.getElementById('chatContainer');
+                
+                if (!data) {
+                    container.innerHTML = `<div class="text-center py-12 text-slate-500 text-sm">No messages yet.</div>`;
+                    return;
+                }
+
+                let html = '';
+                Object.keys(data).forEach(id => {
+                    const msg = data[id];
+
+                    if(activeChatTarget !== 'global') {
+                        const isRelevant = (msg.sender === currentUser && msg.recipient === activeChatTarget) || 
+                                           (msg.sender === activeChatTarget && msg.recipient === currentUser);
+                        if(!isRelevant) return;
+                    }
+
+                    const isMe = msg.sender === currentUser;
+                    
+                    let contentHtml = '';
+                    if(msg.type === 'photo') {
+                        contentHtml = `<div class="mb-2"><img src="${msg.imageUrl}" class="rounded-xl max-h-60 object-cover border border-slate-700 w-full"></div><p class="text-xs text-slate-300">${msg.text}</p>`;
+                    } else if(msg.type === 'audio') {
+                        contentHtml = `<div class="mb-1"><audio controls src="${msg.audioUrl}" class="h-10 w-44 sm:w-60"></audio></div><p class="text-[10px] text-slate-400">${msg.text}</p>`;
+                    } else {
+                        contentHtml = `<p class="text-xs sm:text-sm">${msg.text}</p>`;
+                    }
+
+                    const avatarHtml = msg.avatar ? 
+                        `<img src="${msg.avatar}" class="w-7 h-7 rounded-full object-cover">` : 
+                        `<div class="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center font-bold text-[10px] text-emerald-400">${msg.sender.charAt(0)}</div>`;
+
+                    html += `
+                        <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-3">
+                            <div class="flex items-center space-x-1.5 mb-1 px-1">
+                                ${!isMe ? avatarHtml : ''}
+                                <span class="text-xs font-semibold ${isMe ? 'text-emerald-400' : 'text-indigo-400'}">${msg.sender}</span>
+                                <span class="text-[10px] text-slate-500">• ${msg.timestamp || ''}</span>
+                            </div>
+                            <div class="max-w-[85%] sm:max-w-md rounded-2xl p-3 ${isMe ? 'bg-emerald-600/20 border border-emerald-500/30 text-slate-100 rounded-tr-none' : 'bg-slate-900 border border-slate-800 text-slate-200 rounded-tl-none'} shadow-sm">
+                                ${contentHtml}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html || `<div class="text-center py-12 text-slate-500 text-sm">No direct messages yet.</div>`;
+                container.scrollTop = container.scrollHeight;
+            } catch (err) { console.error(err); }
+        }
+
+        async function sendMessage(e) {
+            e.preventDefault();
+            if(!currentUser) { openProfileModal(); return; }
+
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            if(!text) return;
+
+            const newMsg = {
+                sender: currentUser,
+                dept: currentDept,
+                avatar: currentAvatar,
+                recipient: activeChatTarget,
+                text: text,
+                type: 'text',
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+
+            input.value = "";
+            await postToFirebase(newMsg);
+        }
+
+        async function postToFirebase(data) {
+            let endpoint = activeChatTarget === 'global' ? 
+                `${DB_BASE}company_chat.json` : 
+                `${DB_BASE}direct_chats.json`;
+
+            try {
+                await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                fetchMessages();
+            } catch (err) { alert("Failed to send: " + err.message); }
+        }
+    </script>
+</body>
+</html>
