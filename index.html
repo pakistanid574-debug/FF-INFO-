@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CorpSec - Live Social & Secret Chat</title>
+    <title>CorpSec - Direct Chat & Profiles</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -22,21 +22,24 @@
     <!-- Top Navigation Header -->
     <header class="bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center justify-between z-10">
         <div class="flex items-center space-x-3">
-            <div class="bg-emerald-600 text-white p-2 rounded-xl font-bold flex items-center justify-center w-9 h-9 shadow-lg shadow-emerald-500/20">
-                <i class="fa-solid fa-users-viewfinder text-sm"></i>
+            <div id="myHeaderAvatar" class="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center font-bold text-white overflow-hidden border border-emerald-500/30">
+                <i class="fa-solid fa-user text-sm"></i>
             </div>
             <div>
                 <h1 class="font-bold text-base tracking-tight flex items-center gap-2">
-                    CorpSec Live
-                    <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">Sync Active</span>
+                    <span id="chatTitleHeader">Global Room</span>
+                    <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">Live Sync</span>
                 </h1>
                 <p class="text-xs text-slate-400" id="currentProfileDisplay">Profile: Not Set</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
+            <button onclick="switchChatRoom('global')" class="bg-indigo-600 hover:bg-indigo-700 text-xs px-3 py-2 rounded-xl font-medium transition-all hidden" id="backToGlobalBtn">
+                <i class="fa-solid fa-globe"></i> Global
+            </button>
             <button onclick="toggleProfilesDrawer()" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 py-2 rounded-xl border border-slate-700 font-medium transition-all flex items-center space-x-1.5">
                 <i class="fa-solid fa-user-group text-emerald-400"></i>
-                <span>Active Profiles</span>
+                <span>Profiles</span>
             </button>
             <button onclick="openProfileModal()" class="bg-slate-800 hover:bg-slate-700 text-xs p-2 rounded-xl border border-slate-700 text-slate-300">
                 <i class="fa-solid fa-user-gear"></i>
@@ -55,13 +58,12 @@
     <!-- Message & Gallery Upload Input Bar -->
     <footer class="bg-slate-900 border-t border-slate-800 p-3">
         <form id="chatForm" onsubmit="sendMessage(event)" class="max-w-4xl mx-auto flex items-center gap-2">
-            <!-- Mobile Gallery File Input -->
             <label class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3.5 py-3 rounded-xl border border-slate-700 transition-all flex items-center justify-center cursor-pointer" title="Upload from Gallery">
                 <i class="fa-solid fa-paperclip text-emerald-400"></i>
                 <input type="file" id="galleryFileInput" accept="image/*" class="hidden" onchange="uploadFromGallery(event)">
             </label>
 
-            <input type="text" id="messageInput" autocomplete="off" placeholder="Type a message or share photo..." class="flex-grow bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all">
+            <input type="text" id="messageInput" autocomplete="off" placeholder="Type a message..." class="flex-grow bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-all">
             
             <button type="submit" id="sendBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl font-semibold text-sm shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center">
                 <i class="fa-solid fa-paper-plane"></i>
@@ -69,13 +71,13 @@
         </form>
     </footer>
 
-    <!-- Active Profiles & Friend Requests Drawer Modal -->
+    <!-- Active Profiles & Direct Chat Drawer -->
     <div id="profilesDrawer" class="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm hidden">
         <div class="bg-slate-900 border-l border-slate-800 w-full max-w-sm h-full p-5 flex flex-col justify-between shadow-2xl">
             <div>
                 <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
                     <h3 class="font-bold text-lg flex items-center gap-2">
-                        <i class="fa-solid fa-address-book text-emerald-400"></i> Live Profiles
+                        <i class="fa-solid id-badge text-emerald-400 fa-address-book"></i> Live Profiles & Chat
                     </h3>
                     <button onclick="toggleProfilesDrawer()" class="text-slate-400 hover:text-white">
                         <i class="fa-solid fa-xmark text-lg"></i>
@@ -86,18 +88,18 @@
                 </div>
             </div>
             <div class="text-xs text-slate-500 text-center border-t border-slate-800 pt-3">
-                CorpSec Realtime Directory
+                Tap profile to direct chat
             </div>
         </div>
     </div>
 
-    <!-- Profile Setup Modal -->
+    <!-- Profile Setup & Edit Modal -->
     <div id="profileModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6 shadow-2xl m-4">
             <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
-                <i class="fa-solid fa-user-pen text-emerald-400"></i> Set Your Profile
+                <i class="fa-solid fa-user-pen text-emerald-400"></i> Edit Profile Details
             </h3>
-            <p class="text-xs text-slate-400 mb-4">Set your details so everyone can see your status live.</p>
+            <p class="text-xs text-slate-400 mb-4">Update your name, role, and profile picture URL.</p>
             <div class="space-y-3">
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Your Full Name</label>
@@ -107,8 +109,12 @@
                     <label class="block text-xs font-medium text-slate-300 mb-1">Role / Department</label>
                     <input type="text" id="userDeptInput" placeholder="e.g. Operations Manager" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:border-emerald-500">
                 </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Profile Picture (Image URL)</label>
+                    <input type="text" id="userAvatarInput" placeholder="https://example.com/my-photo.jpg" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:border-emerald-500">
+                </div>
                 <button type="button" onclick="saveProfile()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-semibold text-sm mt-2 transition-all">
-                    Save & Go Live
+                    Save Profile
                 </button>
             </div>
         </div>
@@ -120,6 +126,8 @@
         
         let currentUser = localStorage.getItem('corp_user_name') || "";
         let currentDept = localStorage.getItem('corp_user_dept') || "";
+        let currentAvatar = localStorage.getItem('corp_user_avatar') || "";
+        let activeChatTarget = "global"; // "global" or specific username
         let allProfiles = {};
 
         window.onload = function() {
@@ -129,30 +137,34 @@
                 updateProfileDisplay();
                 updateUserHeartbeat();
             }
-            fetchLiveChat();
+            fetchMessages();
             fetchProfiles();
             
-            // Sync loops
-            setInterval(fetchLiveChat, 3000);
+            setInterval(fetchMessages, 3000);
             setInterval(fetchProfiles, 5000);
-            setInterval(updateUserHeartbeat, 15000); // Heartbeat for Last Seen
+            setInterval(updateUserHeartbeat, 15000);
         };
 
         function openProfileModal() {
             document.getElementById('profileModal').classList.remove('hidden');
             if(currentUser) document.getElementById('userNameInput').value = currentUser;
             if(currentDept) document.getElementById('userDeptInput').value = currentDept;
+            if(currentAvatar) document.getElementById('userAvatarInput').value = currentAvatar;
         }
 
         async function saveProfile() {
             const name = document.getElementById('userNameInput').value.trim();
             const dept = document.getElementById('userDeptInput').value.trim();
+            const avatar = document.getElementById('userAvatarInput').value.trim();
             if(!name) { alert("Please enter your name!"); return; }
             
             currentUser = name;
-            currentDept = dept || "General";
+            currentDept = dept || "Member";
+            currentAvatar = avatar || "";
+
             localStorage.setItem('corp_user_name', currentUser);
             localStorage.setItem('corp_user_dept', currentDept);
+            localStorage.setItem('corp_user_avatar', currentAvatar);
 
             updateProfileDisplay();
             await updateUserHeartbeat();
@@ -160,16 +172,22 @@
         }
 
         function updateProfileDisplay() {
-            document.getElementById('currentProfileDisplay').innerText = `Me: ${currentUser} (${currentDept})`;
+            document.getElementById('currentProfileDisplay').innerText = `${currentUser} (${currentDept})`;
+            const avatarContainer = document.getElementById('myHeaderAvatar');
+            if(currentAvatar) {
+                avatarContainer.innerHTML = `<img src="${currentAvatar}" class="w-full h-full object-cover">`;
+            } else {
+                avatarContainer.innerHTML = `<span class="text-xs font-bold">${currentUser.charAt(0).toUpperCase()}</span>`;
+            }
         }
 
-        // Live Heartbeat & Last Seen Tracker
         async function updateUserHeartbeat() {
             if(!currentUser) return;
             const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const profileData = {
                 name: currentUser,
                 dept: currentDept,
+                avatar: currentAvatar,
                 lastSeen: now,
                 updatedAt: Date.now()
             };
@@ -186,86 +204,61 @@
             document.getElementById('profilesDrawer').classList.toggle('hidden');
         }
 
-        // Fetch All Active Profiles & Friend Requests Status
         async function fetchProfiles() {
             try {
                 const res = await fetch(`${DB_BASE}profiles.json`);
                 allProfiles = await res.json() || {};
-                
-                const reqRes = await fetch(`${DB_BASE}friend_requests.json`);
-                const allRequests = await reqRes.json() || {};
 
                 const container = document.getElementById('profilesList');
-                if(!allProfiles || Object.keys(allProfiles).length === 0) {
-                    container.innerHTML = `<p class="text-xs text-slate-500 text-center">No active profiles found.</p>`;
-                    return;
-                }
-
                 let html = '';
                 Object.keys(allProfiles).forEach(key => {
                     const prof = allProfiles[key];
                     if(prof.name === currentUser) return; // Skip self
 
-                    // Check friend request status
-                    const reqId = `${currentUser}_TO_${prof.name}`.replace(/\s+/g, '_');
-                    const reverseReqId = `${prof.name}_TO_${currentUser}`.replace(/\s+/g, '_');
-                    
-                    let reqStatus = 'none';
-                    if(allRequests[reqId]) reqStatus = allRequests[reqId].status;
-                    if(allRequests[reverseReqId]) reqStatus = 'received_' + allRequests[reverseReqId].status;
-
-                    let actionBtn = '';
-                    if(reqStatus === 'pending') {
-                        actionBtn = `<span class="text-[10px] bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-lg border border-yellow-500/30">Request Sent</span>`;
-                    } else if(reqStatus === 'accepted' || reqStatus === 'received_accepted') {
-                        actionBtn = `<span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded-lg border border-emerald-500/30"><i class="fa-solid fa-check"></i> Friends</span>`;
-                    } else if(reqStatus.startsWith('received_pending')) {
-                        actionBtn = `<button onclick="acceptFriendRequest('${prof.name}')" class="bg-emerald-600 text-white text-[10px] px-2.5 py-1 rounded-lg font-semibold">Accept</button>`;
-                    } else {
-                        actionBtn = `<button onclick="sendFriendRequest('${prof.name}')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] px-2.5 py-1 rounded-lg font-semibold flex items-center gap-1"><i class="fa-solid fa-user-plus"></i> Add Friend</button>`;
-                    }
+                    const avatarHtml = prof.avatar ? 
+                        `<img src="${prof.avatar}" class="w-9 h-9 rounded-xl object-cover border border-slate-700">` : 
+                        `<div class="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-emerald-400 text-xs">${prof.name.charAt(0)}</div>`;
 
                     html += `
                         <div class="bg-slate-800/80 border border-slate-700/60 p-3 rounded-xl flex items-center justify-between">
-                            <div>
-                                <div class="flex items-center gap-1.5">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                    <h4 class="font-bold text-xs text-slate-200">${prof.name}</h4>
+                            <div class="flex items-center gap-3">
+                                ${avatarHtml}
+                                <div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        <h4 class="font-bold text-xs text-slate-200">${prof.name}</h4>
+                                    </div>
+                                    <p class="text-[10px] text-slate-400">${prof.dept}</p>
+                                    <p class="text-[9px] text-slate-500 mt-0.5">Last seen: ${prof.lastSeen || 'Active'}</p>
                                 </div>
-                                <p class="text-[10px] text-slate-400">${prof.dept || 'Member'}</p>
-                                <p class="text-[9px] text-slate-500 mt-0.5">Last Seen: ${prof.lastSeen || 'Recently'}</p>
                             </div>
-                            <div>${actionBtn}</div>
+                            <button onclick="startDirectChat('${prof.name}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-xl font-semibold shadow-md flex items-center gap-1.5">
+                                <i class="fa-solid fa-comment-dots"></i> Chat
+                            </button>
                         </div>
                     `;
                 });
 
-                container.innerHTML = html || `<p class="text-xs text-slate-500 text-center">Only you are live right now.</p>`;
+                container.innerHTML = html || `<p class="text-xs text-slate-500 text-center">No other profiles online.</p>`;
             } catch(e) { console.error(e); }
         }
 
-        async function sendFriendRequest(targetUser) {
-            const reqId = `${currentUser}_TO_${targetUser}`.replace(/\s+/g, '_');
-            const data = { from: currentUser, to: targetUser, status: 'pending', timestamp: Date.now() };
-            await fetch(`${DB_BASE}friend_requests/${reqId}.json`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            fetchProfiles();
+        function startDirectChat(targetName) {
+            activeChatTarget = targetName;
+            document.getElementById('chatTitleHeader').innerText = `Chat with ${targetName}`;
+            document.getElementById('backToGlobalBtn').classList.remove('hidden');
+            toggleProfilesDrawer();
+            fetchMessages();
         }
 
-        async function acceptFriendRequest(targetUser) {
-            const reqId = `${targetUser}_TO_${currentUser}`.replace(/\s+/g, '_');
-            await fetch(`${DB_BASE}friend_requests/${reqId}/status.json`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify('accepted')
-            });
-            fetchProfiles();
+        function switchChatRoom(room) {
+            activeChatTarget = room;
+            document.getElementById('chatTitleHeader').innerText = "Global Room";
+            document.getElementById('backToGlobalBtn').classList.add('hidden');
+            fetchMessages();
         }
 
-        // Handle Gallery Photo Select and Upload
+        // Gallery Photo Upload
         function uploadFromGallery(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -276,9 +269,11 @@
                 const newMsg = {
                     sender: currentUser,
                     dept: currentDept,
-                    text: "📷 Shared a photo from gallery",
+                    avatar: currentAvatar,
+                    text: "📷 Shared photo",
                     imageUrl: base64Image,
                     type: 'photo',
+                    room: activeChatTarget,
                     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 };
                 await postToFirebase(newMsg);
@@ -286,28 +281,40 @@
             reader.readAsDataURL(file);
         }
 
-        // Fetch & Render Live Global Chat Feed
-        async function fetchLiveChat() {
+        // Fetch & Render Messages
+        async function fetchMessages() {
             try {
-                const res = await fetch(`${DB_BASE}company_chat.json`);
+                let endpoint = activeChatTarget === 'global' ? 
+                    `${DB_BASE}company_chat.json` : 
+                    `${DB_BASE}direct_chats.json`;
+
+                const res = await fetch(endpoint);
                 const data = await res.json();
                 const container = document.getElementById('chatContainer');
                 
                 if (!data) {
-                    container.innerHTML = `<div class="text-center py-12 text-slate-500 text-sm">No live messages. Start the chat!</div>`;
+                    container.innerHTML = `<div class="text-center py-12 text-slate-500 text-sm">No messages yet. Start conversation!</div>`;
                     return;
                 }
 
                 let html = '';
                 Object.keys(data).forEach(id => {
                     const msg = data[id];
+
+                    // If direct chat, filter messages between currentUser and activeChatTarget
+                    if(activeChatTarget !== 'global') {
+                        const isRelevant = (msg.sender === currentUser && msg.recipient === activeChatTarget) || 
+                                           (msg.sender === activeChatTarget && msg.recipient === currentUser);
+                        if(!isRelevant) return;
+                    }
+
                     const isMe = msg.sender === currentUser;
                     
                     let contentHtml = '';
                     if(msg.type === 'photo') {
                         contentHtml = `
                             <div class="mb-2">
-                                <img src="${msg.imageUrl}" alt="Shared photo" class="rounded-xl max-h-64 object-cover border border-slate-700/80 w-full">
+                                <img src="${msg.imageUrl}" class="rounded-xl max-h-60 object-cover border border-slate-700 w-full">
                             </div>
                             <p class="text-xs text-slate-300">${msg.text}</p>
                         `;
@@ -315,11 +322,16 @@
                         contentHtml = `<p class="text-sm">${msg.text}</p>`;
                     }
 
+                    const avatarHtml = msg.avatar ? 
+                        `<img src="${msg.avatar}" class="w-7 h-7 rounded-full object-cover">` : 
+                        `<div class="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center font-bold text-[10px] text-emerald-400">${msg.sender.charAt(0)}</div>`;
+
                     html += `
                         <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-3">
-                            <div class="flex items-center space-x-2 mb-1 px-1">
+                            <div class="flex items-center space-x-1.5 mb-1 px-1">
+                                ${!isMe ? avatarHtml : ''}
                                 <span class="text-xs font-semibold ${isMe ? 'text-emerald-400' : 'text-indigo-400'}">${msg.sender}</span>
-                                <span class="text-[10px] text-slate-500">(${msg.dept || 'Member'}) • ${msg.timestamp || ''}</span>
+                                <span class="text-[10px] text-slate-500">• ${msg.timestamp || ''}</span>
                             </div>
                             <div class="max-w-[85%] sm:max-w-md rounded-2xl p-3.5 ${isMe ? 'bg-emerald-600/20 border border-emerald-500/30 text-slate-100 rounded-tr-none' : 'bg-slate-900 border border-slate-800 text-slate-200 rounded-tl-none'} shadow-sm">
                                 ${contentHtml}
@@ -328,7 +340,7 @@
                     `;
                 });
 
-                container.innerHTML = html;
+                container.innerHTML = html || `<div class="text-center py-12 text-slate-500 text-sm">No direct messages with ${activeChatTarget} yet.</div>`;
                 container.scrollTop = container.scrollHeight;
             } catch (err) { console.error(err); }
         }
@@ -344,6 +356,8 @@
             const newMsg = {
                 sender: currentUser,
                 dept: currentDept,
+                avatar: currentAvatar,
+                recipient: activeChatTarget,
                 text: text,
                 type: 'text',
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -354,14 +368,18 @@
         }
 
         async function postToFirebase(data) {
+            let endpoint = activeChatTarget === 'global' ? 
+                `${DB_BASE}company_chat.json` : 
+                `${DB_BASE}direct_chats.json`;
+
             try {
-                await fetch(`${DB_BASE}company_chat.json`, {
+                await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
-                fetchLiveChat();
-            } catch (err) { alert("Failed to post: " + err.message); }
+                fetchMessages();
+            } catch (err) { alert("Failed to send: " + err.message); }
         }
     </script>
 </body>
